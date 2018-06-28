@@ -35,8 +35,8 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
-				<value>com.bridgeit.model.Note</value>
-				<value>com.bridgeit.model.User</value>
+				<value>com.bridgeit.fundooNote.noteservice.model.Note</value>
+				<value>com.bridgeit.fundooNote.utilservice.User</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
