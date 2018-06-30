@@ -9,5 +9,7 @@ public interface IUserDao {
 	public int addUser(User user);
 	public User validateUser(User user);
 	public User getUserByEmaiId(String email);
+	public User getUserById(int id);
 	List<User> checkEmailId(String emailId);
+	public User updateRecord(User user);
 }

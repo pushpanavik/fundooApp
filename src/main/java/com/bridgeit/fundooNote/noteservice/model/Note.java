@@ -2,7 +2,7 @@ package com.bridgeit.fundooNote.noteservice.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,13 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import com.bridgeit.fundooNote.userservice.model.User;
+
 @Entity
 @Table
 public class Note implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -33,8 +32,16 @@ public class Note implements Serializable {
 	private boolean isArchive;
 	private boolean isPin;
 	private boolean isTrash;
+	private Set<User> createdBy;
 	
-	
+	public Set<User> getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Set<User> createdBy) {
+		this.createdBy = createdBy;
+	}
+
 	@Lob
 	@Column(columnDefinition="LONGBLOB")
 	private String image;

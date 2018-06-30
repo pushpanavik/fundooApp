@@ -6,7 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class GenerateToken {
-	private static String KEY="ARefbnionUIO";
+	private static String KEY="piyush19";
 	public static String generateToken(int id)
 	{
 		long currentTime=System.currentTimeMillis();

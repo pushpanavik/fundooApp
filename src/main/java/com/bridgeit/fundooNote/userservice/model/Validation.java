@@ -8,14 +8,14 @@ public class Validation extends HandlerInterceptorAdapter{
 	private static String emailValidation = "[a-z0-9+_.-]+@{1}[a-z](.+){1}[a-z]";
 	
 	
-		public static String userValidation(String email) {
+		public static String userValidation(String emailId) {
 			
-			if(!Pattern.matches(emailValidation, email)) {
+			if(!Pattern.matches(emailValidation, emailId)) {
 			String	msg="enter email correct";
 			System.out.println("Invalid user email");
 				
 			}
-			return email;
+			return emailId;
 		}	
 				
 		}

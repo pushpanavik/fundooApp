@@ -10,7 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bridgeit.fundooNote.userservice.configuration.MessageSender;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
+import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.model.Validation;
 import com.bridgeit.fundooNote.utilservice.GenerateToken;
@@ -20,40 +22,41 @@ import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 
 @Service
-
 public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	IUserDao userDao;
+	
+	@Autowired
+	MessageSender messageSender;
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 	@Transactional
 	public String addUser(User user, HttpServletRequest req) {
-		String getDetails = Validation.userValidation(user.getEmail());
+		String getDetails = Validation.userValidation(user.getEmailId());
 
 		if (getDetails != null) {
 			String generataHash = encoder.encode(user.getPassword());
 			user.setPassword(generataHash);
 			int id = userDao.addUser(user);
 			
-
-			System.out.println("My  primary id is:" + id);
-
 			String token = GenerateToken.generateToken(id);
 			System.out.println("my Token.... " + token);
 
 			int id1 = VerifyJwtToken.getId(token);
 			System.out.println("My id via JWT token..." + id1);
 
-			String url ="<a href='http://localhost:8080/token/tokenvalue/"+token+"' ></a>";	
-			System.out.println(url);
-			System.out.println("emailID.." + user.getEmail());
-			String mailTo = user.getEmail();
 			
-			String subject = "link to activate your account"; 
-
-			SendingMail.sendMail(mailTo, url, subject);
+			EmailDto emailDto=new EmailDto();
+			emailDto.setMailTo(user.getEmailId());
+			emailDto.setName(user.getFirstname()+user.getLastname());
+			emailDto.setName(token);
+			emailDto.setUrl("<a href='http://localhost:8080/token/tokenvalue/' ></a>");
+			emailDto.setText("link to activate your account");
+			 
+			MessageSender.sendMessage(emailDto);
+			
 			return getDetails;
 		}
 
@@ -65,7 +68,7 @@ public class UserServiceImpl implements IUserService {
 
 		System.out.println("goes inside validation method");
 
-		User user2 = userDao.getUserByEmaiId(user.getEmail());
+		User user2 = userDao.getUserByEmaiId(user.getEmailId());
 		if (user2 == null) {
 			System.out.println("Email Id not found ");
 		} else {
@@ -78,7 +81,7 @@ public class UserServiceImpl implements IUserService {
 
 				if(true)
 				{
-					String tokenGenerated = GenerateToken.generateToken(user2.getId());
+					String tokenGenerated = GenerateToken.generateToken(user2.getUserId());
 
 					System.out.println("token successfully generated" + tokenGenerated);
 					
@@ -102,5 +105,37 @@ public class UserServiceImpl implements IUserService {
 		}
 		return false;
 	}
+	@Transactional
+	public boolean forgotPassword(User user, HttpServletRequest req) {
 
+		User userInformation = userDao.getUserByEmaiId(user.getEmailId());
+		
+		if(userInformation!= null) {
+
+			String token = GenerateToken.generateToken(userInformation.getUserId());
+			String url = req.getRequestURL().toString().substring(0, req.getRequestURL().lastIndexOf("/")) + "/resetPasswordLink/" + token;	
+			String mailTo = user.getEmailId();			
+			String msg = "click on given link to rest yor password "+url;
+			String subject = "reset password link";
+			SendingMail.sendMail(mailTo, msg, subject);
+			System.out.println("in forgot");
+
+			return true;
+		}
+		return false;
+	}
+	
+	@Transactional
+	public String resetPassword(HttpServletRequest request, String newPassword, String token) {
+
+		int id = VerifyJwtToken.getId(token);
+		User user = userDao.getUserById(id);
+		String nPassword = user.getPassword();
+		String hashCodePassword = encoder.encode(nPassword);
+		user.setPassword(hashCodePassword);
+		
+		userDao.updateRecord(user);
+		System.out.println("password reset successfully");
+		return null;
+	}
 }

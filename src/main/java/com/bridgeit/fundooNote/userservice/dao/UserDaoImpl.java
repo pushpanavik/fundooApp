@@ -3,6 +3,9 @@ package com.bridgeit.fundooNote.userservice.dao;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.aspectj.lang.annotation.Before;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,25 +28,21 @@ public class UserDaoImpl implements IUserDao {
 
 	
 	@Autowired
-	private SessionFactory factory;
+	private SessionFactory sessionFactory;
 	
 	public int addUser(User user) {
-		Session session=factory.openSession();
-		Transaction tx=session.beginTransaction();
-		int id=(Integer)session.save(user);
+		Session session=sessionFactory.getCurrentSession();
+	    int id3=(Integer)session.save(user);
 		
-		tx.commit();
-		
-		
-		return id;
+		return id3;
 	}
 
 	@SuppressWarnings("deprecation")
 	public User validateUser(User user) {
 		
-		Session session=factory.openSession();
+		Session session=sessionFactory.getCurrentSession();
 		Criteria crite=session.createCriteria(User.class);
-		Criterion email=Restrictions.eq("email", user.getEmail());
+		Criterion email=Restrictions.eq("emailId", user.getEmailId());
 		Criterion password=Restrictions.eq("password", user.getPassword());
 		Criterion bothArePresent=Restrictions.and(email,password);
 		crite.add(bothArePresent);
@@ -57,10 +56,10 @@ public class UserDaoImpl implements IUserDao {
 	@SuppressWarnings("unchecked")
 	public List<User> checkEmailId(String Email) {
 		
-		Session session = factory.openSession();
+		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("deprecation")
 		Criteria criteria = session.createCriteria(User.class);
-		criteria.add(Restrictions.eq("email", Email));
+		criteria.add(Restrictions.eq("emailId", Email));
 		List<User> userList = criteria.list();
 		return userList;
 	}
@@ -71,11 +70,25 @@ public class UserDaoImpl implements IUserDao {
 		
 		System.out.println("goes inside getuser by email id");
 		
-		Session session=factory.openSession();
+		Session session=sessionFactory.getCurrentSession();
 		@SuppressWarnings("deprecation")
-		Criteria criteria=session.createCriteria(User.class).add(Restrictions.eq("email",email));
+		Criteria criteria=session.createCriteria(User.class).add(Restrictions.eq("emailId",email));
 		User userobj=(User)criteria.uniqueResult();
 				return userobj;
+	}
+
+	@Override
+	public User getUserById(int id) {
+		Session session=(Session) sessionFactory.getCurrentSession();
+		User user=session.get(User.class,id);
+		return user;	
+	}
+
+	@Override
+	public User updateRecord(User user) {
+		Session session=sessionFactory.getCurrentSession();
+		session.update(user);
+		return user;
 	}
 
 	

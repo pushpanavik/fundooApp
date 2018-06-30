@@ -24,11 +24,11 @@ public class UserController {
 	private IUserService userservice;
    
 	
-	@RequestMapping(value="/user", method=RequestMethod.POST)
+	@RequestMapping(value="/registerUser", method=RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody User user,HttpServletRequest request)throws EmailAlreadyExistException
 	{
-		System.out.println(user.getEmail()); 
-		if(userservice.isEmailIdPresent(user.getEmail()))
+		System.out.println(user.getEmailId()); 
+		if(userservice.isEmailIdPresent(user.getEmailId()))
 			{
 				 	System.out.println("email already exists");	
 				 	return new  ResponseEntity<>("User Already  Registered ",HttpStatus.CONFLICT);
@@ -43,7 +43,7 @@ public class UserController {
 				}
 	}
 	
-	@RequestMapping(value="login", method=RequestMethod.POST)
+	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public ResponseEntity<?> loginUser(@RequestBody User user,HttpServletRequest request, HttpServletResponse response ){		
 		System.out.println("comes under login method");
 		Response res=new Response();
@@ -65,6 +65,10 @@ public class UserController {
 		return new ResponseEntity<String>("Invalid username or password",HttpStatus.NOT_FOUND);
 		
 	}
+	
+	
+	
+	
 	
 	@RequestMapping(value="/tokenvalue/{token}",method=RequestMethod.GET)
 	public ResponseEntity<?> token(@PathVariable("token") String token){
