@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgeit.fundooNote.userservice.configuration.MessageSender;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
+import com.bridgeit.fundooNote.userservice.dao.RedisDao;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.model.Validation;
@@ -19,23 +20,29 @@ import com.bridgeit.fundooNote.utilservice.GenerateToken;
 import com.bridgeit.fundooNote.utilservice.SendingMail;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
-
-
 @Service
 public class UserServiceImpl implements IUserService {
 
 	@Autowired
-	IUserDao userDao;
+	private IUserDao userDao;
 	
 	@Autowired
-	MessageSender messageSender;
+	private MessageSender messageSender;
+	
+	@Autowired
+	private EmailDto emailDto;
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
+	
+	@Autowired
+	private RedisDao redisCache;
+		
 	@Transactional
 	public String addUser(User user, HttpServletRequest req) {
 		String getDetails = Validation.userValidation(user.getEmailId());
 
+		
 		if (getDetails != null) {
 			String generataHash = encoder.encode(user.getPassword());
 			user.setPassword(generataHash);
@@ -45,18 +52,17 @@ public class UserServiceImpl implements IUserService {
 			System.out.println("my Token.... " + token);
 
 			int id1 = VerifyJwtToken.getId(token);
+			
 			System.out.println("My id via JWT token..." + id1);
 
-			
-			EmailDto emailDto=new EmailDto();
-			emailDto.setMailTo(user.getEmailId());
-			emailDto.setName(user.getFirstname()+user.getLastname());
-			emailDto.setName(token);
-			emailDto.setUrl("<a href='http://localhost:8080/token/tokenvalue/' ></a>");
-			emailDto.setText("link to activate your account");
-			 
-			MessageSender.sendMessage(emailDto);
-			
+			String url="http://localhost:8080/fundoo/tokenvalue/"+token;
+			emailDto.setMailto(user.getEmailId());
+			emailDto.setSubject("click the link to activate your acount");
+			emailDto.setUrl(url);
+		
+			messageSender.sendMessage(emailDto);
+			System.out.println("Email Send Successfully");
+			redisCache.addToken((Integer.toString(id1)),token);
 			return getDetails;
 		}
 
@@ -95,7 +101,7 @@ public class UserServiceImpl implements IUserService {
 		}
 		return null;
 	}
-
+	
 	@Transactional
 	public boolean isEmailIdPresent(String emailId) {
 
@@ -113,20 +119,26 @@ public class UserServiceImpl implements IUserService {
 		if(userInformation!= null) {
 
 			String token = GenerateToken.generateToken(userInformation.getUserId());
-			String url = req.getRequestURL().toString().substring(0, req.getRequestURL().lastIndexOf("/")) + "/resetPasswordLink/" + token;	
-			String mailTo = user.getEmailId();			
-			String msg = "click on given link to rest yor password "+url;
-			String subject = "reset password link";
-			SendingMail.sendMail(mailTo, msg, subject);
-			System.out.println("in forgot");
-
+			int id1 = VerifyJwtToken.getId(token);
+			
+			String url="http://localhost:8080/fundoo/tokenvalue/"+token;
+					
+			emailDto.setMailto(user.getEmailId());
+			emailDto.setSubject("click on given link to rest your password ");
+			emailDto.setUrl(url);
+		
+			messageSender.sendMessage(emailDto);
+			
+			System.out.println("Email Send Successfully");
+			redisCache.addToken((Integer.toString(id1)),token);
+			
 			return true;
 		}
 		return false;
 	}
 	
 	@Transactional
-	public String resetPassword(HttpServletRequest request, String newPassword, String token) {
+	public void resetPassword(HttpServletRequest request, String newPassword, String token) {
 
 		int id = VerifyJwtToken.getId(token);
 		User user = userDao.getUserById(id);
@@ -136,6 +148,20 @@ public class UserServiceImpl implements IUserService {
 		
 		userDao.updateRecord(user);
 		System.out.println("password reset successfully");
-		return null;
+		
+	}
+
+	@Transactional
+	@Override
+	public void activateUser(String token) {
+		int id=VerifyJwtToken.getId(token);
+		String  getredisToken=redisCache.getToken((Integer.toString(id)));
+		if(getredisToken.equals(token)) {
+			
+		User user=userDao.getUserById(id);
+			user.setEnabled(true);
+			userDao.updateRecord(user);	
+		}
+		
 	}
 }

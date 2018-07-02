@@ -3,22 +3,25 @@ package com.bridgeit.fundooNote.userservice.configuration;
 import javax.jms.ConnectionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 
 @Configuration
 @EnableJms
-public class MessageListenerConfiguration {
+public class JMSListenerConfiguration {
 
 	@Autowired
-	private ConnectionFactory connectionFactory;
+	ConnectionFactory connectionFactory;
 	
-	public DefaultJmsListenerContainerFactory defaultJmsListenerContainerFactory()
+	@Bean
+	DefaultJmsListenerContainerFactory jmsListenerContainerFactory()
 	{
-		DefaultJmsListenerContainerFactory djlcf=new DefaultJmsListenerContainerFactory();
-		djlcf.setConnectionFactory(connectionFactory);
-		djlcf.setConcurrency("1-1");
-		return djlcf;
+	 DefaultJmsListenerContainerFactory factory=new DefaultJmsListenerContainerFactory();
+	 factory.setConnectionFactory(connectionFactory);
+	 factory.setConcurrency("1-1");
+	 return factory;
 	}
+	
 }

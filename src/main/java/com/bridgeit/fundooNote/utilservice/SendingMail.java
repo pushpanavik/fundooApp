@@ -13,7 +13,7 @@ public class SendingMail {
 		static String password="aadi123456";
 		static Properties props=new Properties();
 		
-		public static String sendMail(String mailTo,String msg,String subject)
+		public static String sendMail(String mailTo,String msg,String token)
 		{
 			props.put("mail.smtp.host", "smtp.gmail.com");
 	        props.put("mail.smtp.socketFactory.port", "465");
@@ -35,11 +35,9 @@ public class SendingMail {
 	        	
 	            MimeMessage message = new MimeMessage(session);
 	            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
-	            message.setSubject(subject);
+	            message.setSubject(msg,"UTF-8");
 	            //message.setContent("text/html");
-	            message.setText("\tWe receive your request for registration. \n \n "+
-	                    "\tPlease click the Link to complete the registration\n"
-	                    + msg);
+	            message.setText(token,"UTF-8");
 	            
 	            
 	            //send message  
@@ -50,7 +48,7 @@ public class SendingMail {
 	            System.out.println(e);
 	        }
 	    
-			return subject;
+			return null;
 		}
 		
 	}

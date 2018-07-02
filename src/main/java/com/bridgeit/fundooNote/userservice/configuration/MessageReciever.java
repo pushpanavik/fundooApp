@@ -1,31 +1,32 @@
 package com.bridgeit.fundooNote.userservice.configuration;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.JmsException;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.stereotype.Service;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Component;
 
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
-import com.bridgeit.fundooNote.userservice.service.IUserService;
 import com.bridgeit.fundooNote.utilservice.SendingMail;
 
-@Service
-public class MessageReciever {
 
-	@Autowired
-	IUserService userService;
-	
-	static final Logger LOG=LoggerFactory.getLogger(MessageReciever.class);
-	private static final String ORDER_QUEUE = "my_queue";
-	
-	@JmsListener(destination=ORDER_QUEUE)
-	public void receiveMessage(EmailDto emailDto)throws JmsException {
-		System.out.println(emailDto.getName());
-		SendingMail.sendMail(emailDto.getName(),emailDto.getMailTo(),emailDto.getToken());
-		
+
+@Component
+public class MessageReciever {
+	private final String EMAIL_RESPONSE_QUEUE = "mail.queue";
+
+	@JmsListener(destination = EMAIL_RESPONSE_QUEUE)
+	public void receiverMessage(final Message<EmailDto> message) {
+		EmailDto emailDto = message.getPayload();
+
+		System.out.println("Mail-Id : " + emailDto.getMailto());
+		System.out.println("Subject : " + emailDto.getSubject());
+		System.out.println("URL     : " + emailDto.getUrl());
+
+		try {
+
+			SendingMail.sendMail(emailDto.getMailto(),emailDto.getSubject(),emailDto.getUrl());
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
 }

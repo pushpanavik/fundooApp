@@ -1,14 +1,18 @@
-package com.bridgeit.fundoonoteNote.configuration;
-/*package com.bridgeit.configuration;
+package com.bridgeit.fundooNote.configuration;
+
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import com.bridgeit.fundooNote.userservice.configuration.JMSConfig;
+import com.bridgeit.fundooNote.userservice.configuration.JMSListenerConfiguration;
+import com.bridgeit.fundooNote.userservice.configuration.RedisConfig;
 
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		System.out.println("Working");
-		return new Class[] { HibernateConfiguration.class };
+		return new Class[] { HibernateConfiguration.class,JMSConfig.class,JMSListenerConfiguration.class,RedisConfig.class };
 	}
 
 	@Override
@@ -24,4 +28,3 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	}
 
 }
-*/

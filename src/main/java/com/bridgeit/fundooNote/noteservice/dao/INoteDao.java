@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.noteservice.model.NoteDto;
-import com.bridgeit.fundooNote.utilservice.User;
+import com.bridgeit.fundooNote.userservice.model.User;
+
 
 public interface INoteDao {
 	public long addNote(Note note);

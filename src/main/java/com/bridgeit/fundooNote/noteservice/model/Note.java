@@ -32,16 +32,7 @@ public class Note implements Serializable {
 	private boolean isArchive;
 	private boolean isPin;
 	private boolean isTrash;
-	private Set<User> createdBy;
 	
-	public Set<User> getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Set<User> createdBy) {
-		this.createdBy = createdBy;
-	}
-
 	@Lob
 	@Column(columnDefinition="LONGBLOB")
 	private String image;

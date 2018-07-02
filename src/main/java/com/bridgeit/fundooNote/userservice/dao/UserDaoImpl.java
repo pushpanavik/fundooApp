@@ -3,13 +3,9 @@ package com.bridgeit.fundooNote.userservice.dao;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.aspectj.lang.annotation.Before;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +86,6 @@ public class UserDaoImpl implements IUserDao {
 		session.update(user);
 		return user;
 	}
-
+	
 	
 }

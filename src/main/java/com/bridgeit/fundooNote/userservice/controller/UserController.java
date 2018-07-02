@@ -66,13 +66,27 @@ public class UserController {
 		
 	}
 	
-	
-	
-	
-	
-	@RequestMapping(value="/tokenvalue/{token}",method=RequestMethod.GET)
+	@RequestMapping(value="/tokenvalue/{token:.+}",method=RequestMethod.GET)
 	public ResponseEntity<?> token(@PathVariable("token") String token){
 		System.out.println("user clicks the link");
+		userservice.activateUser(token);
 		return new ResponseEntity<>(token,HttpStatus.OK);
 	}
+	
+	@RequestMapping(value="/forgotPassword" ,method=RequestMethod.GET)
+	public ResponseEntity<?>forgotPassword(@RequestBody User user,HttpServletRequest request,String token,String newPassword)
+	{
+		if(userservice.isEmailIdPresent(user.getEmailId()))
+		{
+				System.out.println("email already exist");
+				boolean status=userservice.forgotPassword(user, request);
+				if(status==true)
+				{
+					userservice.resetPassword(request, token, newPassword);
+				}
+			 		
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 }

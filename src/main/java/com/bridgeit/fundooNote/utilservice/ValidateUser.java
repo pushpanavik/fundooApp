@@ -4,6 +4,8 @@ package com.bridgeit.fundooNote.utilservice;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.bridgeit.fundooNote.userservice.model.User;
+
 public class ValidateUser {
 	
 	private static final Pattern emailValidation = Pattern.compile("[a-z0-9+_.-]+@{1}[a-z](.+){1}[a-z]",Pattern.CASE_INSENSITIVE); 
