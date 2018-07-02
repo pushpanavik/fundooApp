@@ -17,7 +17,6 @@ import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.model.Validation;
 import com.bridgeit.fundooNote.utilservice.GenerateToken;
-import com.bridgeit.fundooNote.utilservice.SendingMail;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 @Service
@@ -121,7 +120,7 @@ public class UserServiceImpl implements IUserService {
 			String token = GenerateToken.generateToken(userInformation.getUserId());
 			int id1 = VerifyJwtToken.getId(token);
 			
-			String url="http://localhost:8080/fundoo/tokenvalue/"+token;
+			String url="http://localhost:8080/fundoo/resetPassword/"+token;
 					
 			emailDto.setMailto(user.getEmailId());
 			emailDto.setSubject("click on given link to rest your password ");
@@ -139,8 +138,11 @@ public class UserServiceImpl implements IUserService {
 	
 	@Transactional
 	public void resetPassword(HttpServletRequest request, String newPassword, String token) {
-
+		
 		int id = VerifyJwtToken.getId(token);
+		String  getredisToken=redisCache.getToken((Integer.toString(id)));
+		if(getredisToken.equals(token)) {
+			
 		User user = userDao.getUserById(id);
 		String nPassword = user.getPassword();
 		String hashCodePassword = encoder.encode(nPassword);
@@ -148,7 +150,7 @@ public class UserServiceImpl implements IUserService {
 		
 		userDao.updateRecord(user);
 		System.out.println("password reset successfully");
-		
+	}
 	}
 
 	@Transactional

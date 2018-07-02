@@ -8,7 +8,7 @@ public interface IUserService {
 	public String addUser(User user, HttpServletRequest req);
 	public String validateUser(User user);
 	public boolean forgotPassword(User user,HttpServletRequest req);
-	public void resetPassword(HttpServletRequest req,String token,String newPassword);
+	public void resetPassword(HttpServletRequest request,String newPassword,String token);
 	boolean isEmailIdPresent(String string);
 	public void activateUser(String token);
 }

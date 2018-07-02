@@ -73,20 +73,25 @@ public class UserController {
 		return new ResponseEntity<>(token,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/forgotPassword" ,method=RequestMethod.GET)
+	@RequestMapping(value="/forgotPassword" ,method=RequestMethod.POST)
 	public ResponseEntity<?>forgotPassword(@RequestBody User user,HttpServletRequest request,String token,String newPassword)
 	{
 		if(userservice.isEmailIdPresent(user.getEmailId()))
 		{
 				System.out.println("email already exist");
 				boolean status=userservice.forgotPassword(user, request);
-				if(status==true)
-				{
-					userservice.resetPassword(request, token, newPassword);
-				}
-			 		
+			if(status ==true)
+			{
+				return new ResponseEntity<>(HttpStatus.ACCEPTED);
+			}	
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);		
 	}
 	
+	@RequestMapping(value="/resetPassword/{token:.+}",method=RequestMethod.GET)
+	public  ResponseEntity<?> resetPassword(@PathVariable("token") String token,HttpServletRequest request,@RequestBody User user){
+		String newPassword = user.getPassword();
+		userservice.resetPassword(request,newPassword,token);
+		return new ResponseEntity<>(token,HttpStatus.CREATED);
+	}
 }
