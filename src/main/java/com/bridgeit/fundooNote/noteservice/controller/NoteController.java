@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.noteservice.model.NoteDto;
 import com.bridgeit.fundooNote.noteservice.service.INoteService;
-import com.bridgeit.fundooNote.utilservice.Response;
 import com.bridgeit.fundooNote.utilservice.ValidateNote;
 
 /**
@@ -33,8 +33,7 @@ import com.bridgeit.fundooNote.utilservice.ValidateNote;
 @RestController
 public class NoteController {
 	
-	static Response response;
-	
+		
 	private static final Logger logger = LoggerFactory.getLogger(NoteController.class);
 	
 	/**
@@ -60,9 +59,9 @@ public class NoteController {
 	
 	@Transactional
 	@RequestMapping( value="/addNote", method=RequestMethod.POST)
-	public ResponseEntity<?> createNote(@RequestBody  Note note,HttpServletRequest request ) {
+	public ResponseEntity<?> createNote(@RequestBody  Note note,HttpServletRequest request,@RequestHeader("token")String token ) {
 		
-	response=new Response();
+	
 	boolean noteStatus	=ValidateNote.validateNote(note);
 	System.out.println(1);
 	if(noteStatus==true)
@@ -71,17 +70,16 @@ public class NoteController {
 		long id=noteService.addNote(note);
 		if(id!=0)
 			
-		response.setMsg("Note successfully added");
-		response.setStatus(200);
+		
 		return new ResponseEntity<String>("Note successfully added", HttpStatus.CREATED);
 	}
 	else
 	{
 		System.out.println(6);
-		response.setMsg("Note cannot be empty");
-		response.setStatus(-9);
+		
 		return new ResponseEntity<String>("Note is Empty",HttpStatus.NO_CONTENT);
 	}
+	return null;
 	}
 	@RequestMapping(value="/update/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<?> updateNote(@RequestBody NoteDto note, @PathVariable("id") long id,HttpServletRequest request){
@@ -97,7 +95,7 @@ public class NoteController {
 	public ResponseEntity<?> deleteNote( @PathVariable("id") long id){
 		
 		noteService.deleteNode(id);
-		response.setMsg("successfully deleted notes");
+		
 		return new ResponseEntity<String>("Specified note successfully deleted",HttpStatus.NO_CONTENT);	
 	}
 	

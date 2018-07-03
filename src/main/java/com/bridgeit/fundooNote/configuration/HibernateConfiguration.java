@@ -19,8 +19,10 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.bridgeit.fundooNote.userservice.configuration.MessageSender;
+import com.bridgeit.fundooNote.labelservice.model.Label;
+import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
+import com.bridgeit.fundooNote.userservice.model.User;
 
 @Configuration
 @ComponentScan(basePackages = { "com.bridgeit.fundooNote" })
@@ -41,7 +43,8 @@ public class HibernateConfiguration {
 		 sessionFactory.setDataSource(dataSource());
 		 
 		 sessionFactory.setHibernateProperties(hibernateProperties());
-			sessionFactory.setPackagesToScan("com.bridgeit.fundooNote.userservice.model");
+		 sessionFactory.setAnnotatedClasses(User.class,Note.class,Label.class);
+			
 			return sessionFactory;		
 	}
 	

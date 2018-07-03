@@ -1,11 +1,19 @@
 package com.bridgeit.fundooNote.userservice.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.NotFound;
+
+import com.bridgeit.fundooNote.noteservice.model.Note;
 
 @Entity
 public class User implements Serializable {
@@ -27,7 +35,18 @@ public class User implements Serializable {
 	private int phoneNumber;
 	private boolean enabled;
 	
-	
+	@OneToMany
+	@NotFound
+	private List<Note> note=new ArrayList<>();
+
+	public List<Note> getNote() {
+		return note;
+	}
+
+	public void setNote(List<Note> note) {
+		this.note = note;
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}

@@ -1,4 +1,4 @@
-package com.bridgeit.fundooNote.userservice.configuration;
+package com.bridgeit.fundooNote.configuration;
 
 import javax.jms.ConnectionFactory;
 

@@ -3,10 +3,6 @@ package com.bridgeit.fundooNote.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import com.bridgeit.fundooNote.userservice.configuration.JMSConfig;
-import com.bridgeit.fundooNote.userservice.configuration.JMSListenerConfiguration;
-import com.bridgeit.fundooNote.userservice.configuration.RedisConfig;
-
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
