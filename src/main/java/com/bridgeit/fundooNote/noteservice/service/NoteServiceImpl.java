@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.bridgeit.fundooNote.noteservice.dao.INoteDao;
 import com.bridgeit.fundooNote.noteservice.model.Note;
-import com.bridgeit.fundooNote.noteservice.model.NoteDto;
+import com.bridgeit.fundooNote.userservice.model.User;
+import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 
 @Service
@@ -19,24 +20,42 @@ public class NoteServiceImpl implements INoteService {
 	private INoteDao noteDao;
 	
 	@Transactional
-	public long addNote(Note note) {
+	public long addNote(Note note,String token) {
+		
+	int getId=VerifyJwtToken.getId(token);
+	User user=	noteDao.getUserById(getId);
+	note.setCreatedBy(user);
+	noteDao.addNote(note);
 	return noteDao.addNote(note);
 	}
 
+	@Transactional
 	@Override
-	public void updateNode(NoteDto note, long id) {
-		noteDao.updateNode(note, id);
-	}
+	public void updateNode(Note note,String token) {
+		
+		int getId=VerifyJwtToken.getId(token);
+		User user=	noteDao.getUserById(getId);
+		long userIddb=user.getUserId();
+		
+		Note notes=noteDao.getNoteById(note.getId());
+		long noteuserId=notes.getCreatedBy().getUserId();
+		if(noteuserId==userIddb)
+		{
+			noteDao.updateNode(notes, token);
+		}
+		}
 
+	@Transactional
 	@Override
 	public void deleteNode(long id) {
 		noteDao.deleteNode(id);
 	}
 
+	@Transactional
 	@Override
-	 public List<Note> displayAllNote(Note note) {
+	 public List<Note> displayAllNote(String token) {
 		
-		return noteDao.displayAllNote(note);
+		return noteDao.displayAllNote(token);
 	}
 
 	

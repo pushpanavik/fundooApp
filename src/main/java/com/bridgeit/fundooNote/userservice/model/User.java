@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class User implements Serializable {
@@ -35,9 +39,14 @@ public class User implements Serializable {
 	private int phoneNumber;
 	private boolean enabled;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
 	@NotFound
+	@JsonIgnore
+	@JsonManagedReference
 	private List<Note> note=new ArrayList<>();
+
+	
 
 	public List<Note> getNote() {
 		return note;

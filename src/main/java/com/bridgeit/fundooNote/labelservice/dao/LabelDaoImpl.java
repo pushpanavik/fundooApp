@@ -21,27 +21,24 @@ public class LabelDaoImpl implements ILabelDao {
 	public long addLabel(Label label) {
 		
 		Session session=sessionFactory.getCurrentSession();
-		Transaction tx=session.beginTransaction();
 		session.save(label);
-		tx.commit();
+		
 		return label.getLabelId();
 	}
 	@Override
 	public void deleteLabel(long id) {
 		Session session=sessionFactory.getCurrentSession();
-		Transaction tx=session.beginTransaction();
 		Label label2=session.byId(Label.class).load(id);
 		session.delete(label2);
-		tx.commit();
 		
 	}
 	@Override
 	public void updateLabel(LabelDto labelDto, long id) {
 		Session session=sessionFactory.getCurrentSession();
-		Transaction tx=session.beginTransaction();
+		
 		Label label2=session.byId(Label.class).load(id);
 		session.saveOrUpdate(label2);
-		tx.commit();	
+			
 		
 	}
 	/*@Override

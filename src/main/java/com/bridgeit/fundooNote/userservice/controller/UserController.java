@@ -61,9 +61,9 @@ public class UserController {
 				{
 					logger.info("logged In successsfully");
 					logger.info("your token generated is" +token);
-					response.setHeader("Authorization", token);
+					response.setHeader("Author", token);
 							
-					return new ResponseEntity<String>("Login succesful",HttpStatus.OK);
+					return new ResponseEntity<String>(token,HttpStatus.OK);
 				}
 		}
 		else

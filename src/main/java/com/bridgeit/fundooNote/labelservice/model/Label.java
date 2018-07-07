@@ -1,20 +1,22 @@
 package com.bridgeit.fundooNote.labelservice.model;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.NotFound;
+
 import com.bridgeit.fundooNote.noteservice.model.Note;
-import com.bridgeit.fundooNote.userservice.model.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table
@@ -32,30 +34,18 @@ public class Label {
 		return labelId;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "userId")
-	@JsonIgnore
-	private User user;
-	
-	@ManyToMany
-	@JsonIgnore
-	private Set<Note> notes;
-	
+	@OneToMany(fetch = FetchType.LAZY)
+	@NotFound
+	@JsonView
+	@JsonManagedReference
+	private List<Note> notes=new ArrayList<>();
 
-	public Set<Note> getNotes() {
+	public List<Note> getNotes() {
 		return notes;
 	}
 
-	public void setNotes(Set<Note> notes) {
+	public void setNotes(List<Note> notes) {
 		this.notes = notes;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	public void setLabelId(int labelId) {

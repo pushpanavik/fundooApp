@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
-import com.bridgeit.fundooNote.noteservice.model.NoteDto;
 import com.bridgeit.fundooNote.noteservice.service.INoteService;
 import com.bridgeit.fundooNote.utilservice.ValidateNote;
 
@@ -57,7 +55,7 @@ public class NoteController {
 	private INoteService noteService;
 	
 	
-	@Transactional
+	
 	@RequestMapping( value="/addNote", method=RequestMethod.POST)
 	public ResponseEntity<?> createNote(@RequestBody  Note note,HttpServletRequest request,@RequestHeader("token")String token ) {
 		
@@ -67,7 +65,7 @@ public class NoteController {
 	if(noteStatus==true)
 	{
 		System.out.println(5);
-		long id=noteService.addNote(note);
+		long id=noteService.addNote(note,token);
 		if(id!=0)
 			
 		
@@ -81,17 +79,17 @@ public class NoteController {
 	}
 	return null;
 	}
-	@RequestMapping(value="/update/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<?> updateNote(@RequestBody NoteDto note, @PathVariable("id") long id,HttpServletRequest request){
-		//int userId=(Integer)request.getAttribute("userId");
-		
-		noteService.updateNode(note,id);
+	@RequestMapping(value="/updateNote", method=RequestMethod.PUT)
+	public ResponseEntity<?> updateNote(@RequestBody Note note, HttpServletRequest request,@RequestHeader("token")String token){
+			
+		System.out.println("token of updateNode is" +token);
+		noteService.updateNode(note,token);
 		
 		return new ResponseEntity<String>("Note Succesfully updated",HttpStatus.ACCEPTED);
 		
 	}
 	
-	@RequestMapping(value="/delete/{id}", method=RequestMethod.DELETE)
+	@RequestMapping(value="/deleteNote/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<?> deleteNote( @PathVariable("id") long id){
 		
 		noteService.deleteNode(id);
@@ -99,10 +97,11 @@ public class NoteController {
 		return new ResponseEntity<String>("Specified note successfully deleted",HttpStatus.NO_CONTENT);	
 	}
 	
+	
 	@GetMapping("/displayNote")
-	public ResponseEntity<?> ListNote(Note note)
+	public ResponseEntity<?> ListNote(@RequestHeader("token")String token)
 	{ 
-		List<Note> not = noteService.displayAllNote(note);
+		List<Note> not = noteService.displayAllNote(token);
 		return ResponseEntity.ok().body(not);
 		
 	}

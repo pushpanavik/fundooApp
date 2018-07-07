@@ -1,25 +1,32 @@
 package com.bridgeit.fundooNote.noteservice.model;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 
+import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.userservice.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
-public class Note implements Serializable {
+public class Note  {
 
-	private static final long serialVersionUID = 1L;
+	
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -33,11 +40,26 @@ public class Note implements Serializable {
 	private boolean isArchive;
 	private boolean isPin;
 	private boolean isTrash;
+	private Date lastupdatedAt;
 	
-	@ManyToOne
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@NotFound
+	@JsonView
+	@JsonBackReference
 	private User createdBy;
 	
+	@Lob
+	@Column(columnDefinition="LONGBLOB")
+	private String image;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@Fetch(FetchMode.JOIN)
+	@NotFound
+	@JsonIgnore
+	@JsonBackReference
+	private List<Label> label=new ArrayList<>();
+
 	public User getCreatedBy() {
 		return createdBy;
 	}
@@ -45,11 +67,15 @@ public class Note implements Serializable {
 	public void setCreatedBy(User createdBy) {
 		this.createdBy = createdBy;
 	}
+	
+	public List<Label> getLabel() {
+		return label;
+	}
 
-	@Lob
-	@Column(columnDefinition="LONGBLOB")
-	private String image;
-
+	public void setLabel(List<Label> label) {
+		this.label = label;
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -103,7 +129,7 @@ public class Note implements Serializable {
 	}
 
 	public void setArchive(boolean isArchive) {
-		this.isArchive = false;
+		this.isArchive = isArchive;
 	}
 
 	public boolean isPin() {
@@ -111,7 +137,7 @@ public class Note implements Serializable {
 	}
 
 	public void setPin(boolean isPin) {
-		this.isPin = false;
+		this.isPin = isPin;
 	}
 
 	public boolean isTrash() {
@@ -119,7 +145,7 @@ public class Note implements Serializable {
 	}
 
 	public void setTrash(boolean isTrash) {
-		this.isTrash = false;
+		this.isTrash = isTrash;
 	}
 
 	public String getImage() {
@@ -129,6 +155,21 @@ public class Note implements Serializable {
 	public void setImage(String image) {
 		this.image = image;
 	}
+
+	public Date getLastupdatedAt() {
+		return lastupdatedAt;
+	}
+
+	public void setLastupdatedAt(Date lastupdatedAt) {
+		this.lastupdatedAt = lastupdatedAt;
+	}
 		
+	public Note()
+	{
+		this.isArchive=false;
+		this.color="white";
+		this.isTrash=false;
+		this.isPin=false;
+	}
 	
 }
