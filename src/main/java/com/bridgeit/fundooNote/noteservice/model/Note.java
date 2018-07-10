@@ -53,27 +53,12 @@ public class Note  {
 	@Column(columnDefinition="LONGBLOB")
 	private String image;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@Fetch(FetchMode.JOIN)
-	@NotFound
-	@JsonIgnore
-	@JsonBackReference
-	private List<Label> label=new ArrayList<>();
-
-	public User getCreatedBy() {
+		public User getCreatedBy() {
 		return createdBy;
 	}
 
 	public void setCreatedBy(User createdBy) {
 		this.createdBy = createdBy;
-	}
-	
-	public List<Label> getLabel() {
-		return label;
-	}
-
-	public void setLabel(List<Label> label) {
-		this.label = label;
 	}
 	
 	public long getId() {

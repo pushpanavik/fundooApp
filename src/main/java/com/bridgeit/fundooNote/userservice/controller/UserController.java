@@ -19,6 +19,9 @@ import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.service.IUserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 public class UserController {
 	
@@ -28,7 +31,8 @@ public class UserController {
 	private IUserService userservice;
    
 	
-	@RequestMapping(value="/registerUser", method=RequestMethod.POST)
+	@ApiOperation(value="register new user")
+	@RequestMapping(value="/user/registerUser", method=RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody User user,HttpServletRequest request)throws EmailAlreadyExistException
 	{
 		System.out.println(user.getEmailId()); 
@@ -48,7 +52,8 @@ public class UserController {
 				}
 	}
 	
-	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@ApiOperation(value="login User")
+	@RequestMapping(value="/user/login", method=RequestMethod.POST)
 	public ResponseEntity<?> loginUser(@RequestBody User user,HttpServletRequest request,HttpServletResponse response ){		
 		System.out.println("comes under login method");
 		
@@ -75,14 +80,16 @@ public class UserController {
 		
 	}
 	
-	@RequestMapping(value="/tokenvalue/{token:.+}",method=RequestMethod.GET)
+	@ApiOperation(value="get token ")
+	@RequestMapping(value="/user/tokenvalue/{token:.+}",method=RequestMethod.GET)
 	public ResponseEntity<?> token(@PathVariable("token") String token){
 		System.out.println("user clicks the link");
 		userservice.activateUser(token);
 		return new ResponseEntity<>(token,HttpStatus.FOUND);
 	}
 	
-	@RequestMapping(value="/forgotPassword" ,method=RequestMethod.POST)
+	@ApiOperation(value="forgot password")
+	@RequestMapping(value="/user/forgotPassword" ,method=RequestMethod.POST)
 	public ResponseEntity<?>forgotPassword(@RequestBody User user,HttpServletRequest request,String token,String newPassword)
 	{
 		if(userservice.isEmailIdPresent(user.getEmailId()))	{
@@ -98,7 +105,8 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK);		
 	}
 	
-	@RequestMapping(value="/resetPassword/{token:.+}",method=RequestMethod.POST)
+	@ApiOperation(value="reset password")
+	@RequestMapping(value="/user/resetPassword/{token:.+}",method=RequestMethod.POST)
 	public  ResponseEntity<?> resetPassword(@PathVariable("token") String token,HttpServletRequest request,@RequestBody ResetPasswordDto reset){
 		String newPassword = reset.getPassword();
 		userservice.resetPassword(request,newPassword,token,reset);

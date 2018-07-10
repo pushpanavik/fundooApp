@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgeit.fundooNote.configuration.MessageSender;
 import com.bridgeit.fundooNote.exceptionservice.EmailAlreadyExistException;
-import com.bridgeit.fundooNote.userservice.controller.UserController;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
 import com.bridgeit.fundooNote.userservice.dao.RedisDao;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;

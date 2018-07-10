@@ -43,7 +43,7 @@ public class HibernateConfiguration {
 		 sessionFactory.setDataSource(dataSource());
 		 
 		 sessionFactory.setHibernateProperties(hibernateProperties());
-		 sessionFactory.setAnnotatedClasses(User.class,Note.class,Label.class);
+		 sessionFactory.setAnnotatedClasses(User.class,Note.class);
 			
 			return sessionFactory;		
 	}

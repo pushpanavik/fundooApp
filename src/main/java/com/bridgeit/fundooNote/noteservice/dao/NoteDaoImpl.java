@@ -23,7 +23,6 @@ public class NoteDaoImpl implements INoteDao {
 	private SessionFactory factory;
 	
 	@Override
-
 	public long addNote(Note note) {
 		
 			Session getSession=(Session) factory.getCurrentSession();

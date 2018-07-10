@@ -1,5 +1,8 @@
 package com.bridgeit.fundooNote.labelservice.model;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RequestMapping
 public class LabelDto {
 	private int labelId;
 	private String name;

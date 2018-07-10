@@ -14,11 +14,13 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+@RequestMapping
 @Entity
 public class User implements Serializable {
 	

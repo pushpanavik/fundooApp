@@ -16,13 +16,13 @@ import com.bridgeit.fundooNote.utilservice.Response;
 @RestController
 public class LabelController {
 	
-	private static Response response;
+	/*private static Response response;
 	
 	@Autowired
 	private ILabel labelService;
 
 	
-	@RequestMapping(value="/addLabel", method=RequestMethod.POST)
+	@RequestMapping(value="/user/addLabel", method=RequestMethod.POST)
 	public ResponseEntity<?> addLabel( Label label,HttpServletRequest request)
 	{
 		labelService.addLabel(label);
@@ -35,7 +35,7 @@ public class LabelController {
 		else {
 		return new ResponseEntity<>("label cannot be created",HttpStatus.EXPECTATION_FAILED);
 		}
-	}
+	}*/
 	/*@RequestMapping(value="/update/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<?> updateLabel(@RequestBody LabelDto labelDto, @PathVariable("id") long id,HttpServletRequest request){
 	

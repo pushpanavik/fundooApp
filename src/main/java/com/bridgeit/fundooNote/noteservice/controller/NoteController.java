@@ -1,9 +1,6 @@
 package com.bridgeit.fundooNote.noteservice.controller;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,38 +21,26 @@ import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.noteservice.service.INoteService;
 import com.bridgeit.fundooNote.utilservice.ValidateNote;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * Handles requests for the application home page.
  */
+@Api
 @RestController
 public class NoteController {
 	
 		
 	private static final Logger logger = LoggerFactory.getLogger(NoteController.class);
 	
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
-		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
-		return "home";
-	}
-	
+
 	@Autowired
 	private INoteService noteService;
 	
 	
-	
-	@RequestMapping( value="/addNote", method=RequestMethod.POST)
+	@ApiOperation(value = "add note ")
+	@RequestMapping( value="/user/addNote", method=RequestMethod.POST)
 	public ResponseEntity<?> createNote(@RequestBody  Note note,HttpServletRequest request,@RequestHeader("token")String token ) {
 		
 	
@@ -79,7 +63,8 @@ public class NoteController {
 	}
 	return null;
 	}
-	@RequestMapping(value="/updateNote", method=RequestMethod.PUT)
+	@ApiOperation(value = "update note ")
+	@RequestMapping(value="/user/updateNote", method=RequestMethod.PUT)
 	public ResponseEntity<?> updateNote(@RequestBody Note note, HttpServletRequest request,@RequestHeader("token")String token){
 			
 		System.out.println("token of updateNode is" +token);
@@ -88,8 +73,8 @@ public class NoteController {
 		return new ResponseEntity<String>("Note Succesfully updated",HttpStatus.ACCEPTED);
 		
 	}
-	
-	@RequestMapping(value="/deleteNote/{id}", method=RequestMethod.DELETE)
+	@ApiOperation(value = "delete note ")
+	@RequestMapping(value="/user/deleteNote/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<?> deleteNote( @PathVariable("id") long id){
 		
 		noteService.deleteNode(id);
@@ -97,8 +82,8 @@ public class NoteController {
 		return new ResponseEntity<String>("Specified note successfully deleted",HttpStatus.NO_CONTENT);	
 	}
 	
-	
-	@GetMapping("/displayNote")
+	@ApiOperation(value = "retrieve all note ")
+	@GetMapping("/user/displayNote")
 	public ResponseEntity<?> ListNote(@RequestHeader("token")String token)
 	{ 
 		List<Note> not = noteService.displayAllNote(token);

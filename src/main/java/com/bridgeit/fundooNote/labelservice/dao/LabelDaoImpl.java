@@ -14,6 +14,8 @@ import com.bridgeit.fundooNote.labelservice.model.LabelDto;
 @Repository
 public class LabelDaoImpl implements ILabelDao {
 
+	
+
 	@Autowired
 	private SessionFactory sessionFactory;
 	
