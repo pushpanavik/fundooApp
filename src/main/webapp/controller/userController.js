@@ -1,19 +1,35 @@
-app.controller('UserCtrl',function($scope,userservice)
-{
-$scope.registerModel=
-	{
-     firstname:"",
-     lastname:"",
-     emailId:"",
-     password:"",
-     address:"",
-     phoneNumber:""
-	}
-$scope.register=function(registerModel)
-{
- console.log(angular.toJson(registerModel));	
- userservice.getData(registerModel);
- 
-}
+app
+.controller('userCtrl',function (userservice,$scope,$state) {
+	$scope.registerModel=function(){
+	var user={
+		    firstname: $scope.fname,
+		    lastname: $scope.lname,
+		    emailId: $scope.emailId,
+		    password: $scope.password,
+		    address: $scope.address,
+		    phoneNumber:$scope.phoneNumber
+		  };
 
- });
+		  userservice.registerModel(user)
+		  console.log(user);
+	}
+		
+	$scope.loginModel=function(){
+		var user={
+				emailId: $scope.emailId,
+				password: $scope.password
+		};
+		userservice.loginModel(user)
+		console.log(user);
+	}
+	
+	$scope.forgotModel=function(){
+		var user={
+				newpassword: $scope.newpassword	
+		};
+		userservice.forgotModel(user)
+		console.log(user);
+	}
+	
+	});
+

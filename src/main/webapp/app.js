@@ -6,20 +6,20 @@ app.config(function($stateProvider,$urlRouterProvider)
   {
     url:'/Register',
     templateUrl:'templates/Register.html',
-    controller:'RegisterCtrl'
+    controller:'userCtrl'
   })
   .state('Login',
 {
   url:'/login',
   templateUrl:'templates/Login.html',
-  controller:'LoginCtrl'
+  controller:'userCtrl'
 })
 .state('forgotPassword',
 {
   url:'/forgotPassword',
   templateUrl:'templates/forgotPassword.html',
-  controller:'forgotCtrl'
+  controller:'userCtrl'
 })
 
-  $urlRouterProvider.otherwise("/ForgotPassword")
+  $urlRouterProvider.otherwise("/Register")
 });

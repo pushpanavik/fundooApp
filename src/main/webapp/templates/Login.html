@@ -3,7 +3,7 @@
     <h1 id="button"><center><b>Login Form</b></center></h1><br><br>
     <md-input-container id="login" class="md-block" >
       <label>Email</label>
-      <input type="text" name="email" ng-model="useremail" ng-pattern="/^.+@.+\..+$/" required/>
+      <input type="text" name="emailId" ng-model="emailId" ng-pattern="/^.+@.+\..+$/" required/>
       <div ng-messages="myform.email.$error">
         <div ng-message="[pattern]">You must enter valid email address.for eg abc@gmail.com</div>
       </div>
@@ -16,7 +16,7 @@
         <div ng-message="['minlength']">cannot be left blank </div>
       </div>
         <div layout-align="center center">
-          <md-button ng-click="login()" class="md-raised" id="button" style="margin:auto;display:block">Login</md-button>
+          <md-button ng-click="loginModel()" class="md-raised" id="button" style="margin:auto;display:block">Login</md-button>
           <p class="message"> Forgot Password? <a href="#!/forgotPassword"> Signin </a></p>
         </div>
       </md-input-container>

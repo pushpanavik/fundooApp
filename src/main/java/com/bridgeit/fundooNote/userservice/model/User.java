@@ -38,7 +38,7 @@ public class User implements Serializable {
 	private String emailId;
 	private String password;
 	private String address;
-	private int phoneNumber;
+	private String phoneNumber;
 	private boolean enabled;
 	
 	@OneToMany(fetch = FetchType.EAGER)
@@ -118,11 +118,11 @@ public class User implements Serializable {
 		this.address = address;
 	}
 
-	public int getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(int phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 

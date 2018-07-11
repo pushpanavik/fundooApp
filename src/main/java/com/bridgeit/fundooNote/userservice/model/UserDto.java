@@ -2,14 +2,14 @@ package com.bridgeit.fundooNote.userservice.model;
 
 public class UserDto {
 
-private String email;
+private String emailId;
 private String password;
 
 public String getEmail() {
-	return email;
+	return emailId;
 }
 public void setEmail(String email) {
-	this.email = email;
+	this.emailId = email;
 }
 public String getPassword() {
 	return password;

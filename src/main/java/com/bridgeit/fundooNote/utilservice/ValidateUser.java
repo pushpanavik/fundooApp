@@ -23,7 +23,7 @@ public class ValidateUser {
 					return "not a valid email address";
 				}
 					
-					else if(Integer.toString(user.getPhoneNumber()).length()!=10) {
+					else if((user.getPhoneNumber()).length()!=10) {
 						return "enter 10 digit phone number";
 					}
 						

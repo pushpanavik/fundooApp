@@ -8,11 +8,12 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "com.bridgeit.fundooNote" })
-public class NoteConfiguration implements WebMvcConfigurer{
+public class WebConfiguration implements WebMvcConfigurer{
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -29,5 +30,6 @@ public class NoteConfiguration implements WebMvcConfigurer{
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 	 configurer.enable();
 	}
+
 	
 }

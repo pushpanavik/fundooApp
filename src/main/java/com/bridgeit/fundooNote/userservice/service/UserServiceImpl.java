@@ -148,8 +148,8 @@ public class UserServiceImpl implements IUserService {
 			emailDto.setUrl(url);
 		
 			messageSender.sendMessage(emailDto);
-			
 			logger.info("Email Send Successfully");
+			
 			redisCache.addToken((Integer.toString(id1)),token);
 			
 			return true;

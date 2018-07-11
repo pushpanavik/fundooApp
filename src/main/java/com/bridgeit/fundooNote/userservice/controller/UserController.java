@@ -1,5 +1,7 @@
 package com.bridgeit.fundooNote.userservice.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -82,15 +84,23 @@ public class UserController {
 	
 	@ApiOperation(value="get token ")
 	@RequestMapping(value="/user/tokenvalue/{token:.+}",method=RequestMethod.GET)
-	public ResponseEntity<?> token(@PathVariable("token") String token){
+	public ResponseEntity<?> token(@PathVariable("token") String token,HttpServletResponse response,HttpServletRequest req){
 		System.out.println("user clicks the link");
 		userservice.activateUser(token);
+		String url=req.getRequestURL().toString().substring(0, req.getRequestURL().lastIndexOf("/")-15);
+		System.out.println(url);
+		try {
+			response.sendRedirect(url +"#!/login" );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new ResponseEntity<>(token,HttpStatus.FOUND);
 	}
 	
 	@ApiOperation(value="forgot password")
 	@RequestMapping(value="/user/forgotPassword" ,method=RequestMethod.POST)
-	public ResponseEntity<?>forgotPassword(@RequestBody User user,HttpServletRequest request,String token,String newPassword)
+	public ResponseEntity<?>forgotPassword(@RequestBody User user,HttpServletRequest request,String token)
 	{
 		if(userservice.isEmailIdPresent(user.getEmailId()))	{
 			
@@ -98,6 +108,7 @@ public class UserController {
 				boolean status=userservice.forgotPassword(user, request);
 			if(status ==true)
 			{
+				
 				logger.info("ok confirmation done. continue to reset password");
 				return new ResponseEntity<>(HttpStatus.ACCEPTED);
 			}	

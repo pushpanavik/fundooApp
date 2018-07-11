@@ -3,6 +3,7 @@ package com.bridgeit.fundooNote.utilservice;
 public class Response {
 private String message;
 private int status;
+
 public int getStatus() {
 	return status;
 }
