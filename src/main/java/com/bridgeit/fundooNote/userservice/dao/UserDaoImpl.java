@@ -19,10 +19,8 @@ import com.bridgeit.fundooNote.userservice.model.User;
 public class UserDaoImpl implements IUserDao {
 	
 	public UserDaoImpl() {
-		System.out.println("Dao created");
 	}
 
-	
 	@Autowired
 	private SessionFactory sessionFactory;
 	

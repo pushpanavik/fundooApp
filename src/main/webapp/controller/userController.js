@@ -25,10 +25,19 @@ app
 	
 	$scope.forgotModel=function(){
 		var user={
-				newpassword: $scope.newpassword	
+				emailId: $scope.emailId	
 		};
 		userservice.forgotModel(user)
-		console.log(user);
+		console.log($scope.forgotModel);
+		console.log($scope.emailId)
+		
+	}
+	$scope.resetModel=function(){
+		var user={
+				newpassword: $scope.newpassword
+		};
+		userservice.resetModel(user)
+		console.log($scope.newpassword);
 	}
 	
 	});

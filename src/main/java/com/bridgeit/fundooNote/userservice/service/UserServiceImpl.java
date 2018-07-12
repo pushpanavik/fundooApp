@@ -1,8 +1,10 @@
 package com.bridgeit.fundooNote.userservice.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgeit.fundooNote.configuration.MessageSender;
 import com.bridgeit.fundooNote.exceptionservice.EmailAlreadyExistException;
+import com.bridgeit.fundooNote.exceptionservice.EmailIdNotPresentException;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
 import com.bridgeit.fundooNote.userservice.dao.RedisDao;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
@@ -72,7 +75,7 @@ public class UserServiceImpl implements IUserService {
 		
 			messageSender.sendMessage(emailDto);
 			System.out.println("Email Send Successfully");
-			redisCache.addToken((Integer.toString(id1)),token);
+			redisCache.saveToken((Integer.toString(id1)),token);
 			return getDetails;
 		}
 
@@ -102,7 +105,6 @@ public class UserServiceImpl implements IUserService {
 
 					logger.info("token successfully generated" + tokenGenerated);
 					
-					
 					return tokenGenerated;
 				}
 				
@@ -117,40 +119,56 @@ public class UserServiceImpl implements IUserService {
 	public boolean isEmailIdPresent(String emailId) {
 
 		List<User> userlist = userDao.checkEmailId(emailId);
-		
+		System.out.println("FEnd comes in the dao ");
 		if (userlist.size() != 0) {
+			System.out.println("returns true from dao");
+			/*try {
+				throw new EmailAlreadyExistException("email already exist");
+			}
+			catch(EmailAlreadyExistException e)
+			{
+				e.printStackTrace();
+			}*/
 			return true;
+			
 		}else {
 			try {
-				throw new EmailAlreadyExistException("email already exist");
-			} catch (EmailAlreadyExistException e) {
+				throw new EmailIdNotPresentException("emailid does not exist");
+			} catch (EmailIdNotPresentException e) {
 				
-				logger.info("email already exist");
+				logger.info("email id not  exist");
 			}
+			
 		return false;
+		
 		}
 	}
 	@Transactional
-	public boolean forgotPassword(User user, HttpServletRequest req) {
+	public boolean forgotPassword(User user, HttpServletRequest request) {
 
+		
 		User userInformation = userDao.getUserByEmaiId(user.getEmailId());
 		System.out.println(user.getPassword());
 		
 		if(userInformation!= null) {
 
-			String token = GenerateToken.generateToken(userInformation.getUserId());
-			int id1 = VerifyJwtToken.getId(token);
 			
-			String url="http://localhost:8080/fundoo/resetPassword/"+token;
+			String token = GenerateToken.generateToken(userInformation.getUserId());
+			
+			int id1 = VerifyJwtToken.getId(token);
+		String url=request.getRequestURL().toString().substring(0, request.getRequestURL().lastIndexOf("/")-3)+"ser/resetPwd"+"/"+token;
+			System.out.println(url);
 					
+			System.out.println("url inside forgot "+url);
+			
 			emailDto.setMailto(user.getEmailId());
-			emailDto.setSubject("click on given link to rest your password ");
-			emailDto.setUrl(url);
+			emailDto.setSubject("click on given link to reset your password ");
+			emailDto.setUrl(url );
 		
 			messageSender.sendMessage(emailDto);
 			logger.info("Email Send Successfully");
 			
-			redisCache.addToken((Integer.toString(id1)),token);
+			redisCache.saveToken((Integer.toString(id1)),token);
 			
 			return true;
 		}
@@ -158,7 +176,7 @@ public class UserServiceImpl implements IUserService {
 	}
 	
 	@Transactional
-	public void resetPassword(HttpServletRequest request, String newPassword, String token,ResetPasswordDto reset) {
+	public void resetPassword( String newPassword, String token,ResetPasswordDto reset) {
 		
 		int id = VerifyJwtToken.getId(token);
 		String  getredisToken=redisCache.getToken((Integer.toString(id)));
@@ -171,6 +189,7 @@ public class UserServiceImpl implements IUserService {
 		
 		userDao.updateRecord(user1);
 		logger.info("password reset successfully");
+		
 	}
 	}
 
@@ -187,4 +206,6 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 	}
+
+	
 }

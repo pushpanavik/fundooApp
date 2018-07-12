@@ -12,7 +12,7 @@ public class RedisDao {
 	
 	
 	
-	public void addToken(String key,String token) {
+	public void saveToken(String key,String token) {
 		redistemplate.opsForValue().set(key, token);
 	}
 	public void deleteToken(String key) {

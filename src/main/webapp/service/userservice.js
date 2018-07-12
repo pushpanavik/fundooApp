@@ -1,8 +1,8 @@
-app.factory('userservice', function($http) {
+app.factory('userservice', function($http,$window) {
      
 	var serviceobj =[];
 	
-	serviceobj.registerModel = function(user) {
+	serviceobj.registerModel = function(user,token) {
 		
 		return $http({
 			method : "POST",
@@ -10,7 +10,8 @@ app.factory('userservice', function($http) {
 			data : user
 		}).then(function successCallback(response) {
 			console.log(response.data)
-			console.log("Check your mail to activate your account ");
+			localStorage.setItem("token",token);
+			$window.alert("Check your mail to activate your account ");
 			
 
 		}, function errorCallback(response) {
@@ -25,7 +26,8 @@ app.factory('userservice', function($http) {
 			data:user
 		}).then (function successCallback(response){
 			console.log(response.data);
-			console.log("successfully login");
+			$window.alert("successfully login");
+			
 		},function errorCallback(response){
 			console.log(response.data)
 		});
@@ -33,13 +35,30 @@ app.factory('userservice', function($http) {
 	
 	
 	serviceobj.forgotModel=function(user){
-		return $http({
+		return  $http({
 			method:"POST",
 			url:"http://localhost:8080/fundoo/user/forgotPassword",
-			data:user
+			data:angular.toJson(user)
+		}).then (function successCallback(response){
+			console.log(response.data.message);
+		
+			console.log(token);
+			
+			$window.alert("check your email for login");
+		},function errorCallback(response){
+			console.log(response.data)
+		});
+	}
+	
+	serviceobj.resetModel=function(user){
+		return $http({
+			method: "POST",
+			url:"http://localhost:8080/fundoo/user/resetPassword",
+			data:angular.toJson(user)
 		}).then (function successCallback(response){
 			console.log(response.data);
-			console.log("check your email for login");
+			
+			$window.alert("your password successfully updated");
 		},function errorCallback(response){
 			console.log(response.data)
 		});

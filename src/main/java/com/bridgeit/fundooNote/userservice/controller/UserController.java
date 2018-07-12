@@ -14,9 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bridgeit.fundooNote.configuration.MessageSender;
 import com.bridgeit.fundooNote.exceptionservice.EmailAlreadyExistException;
+import com.bridgeit.fundooNote.exceptionservice.EmailIdNotPresentException;
+import com.bridgeit.fundooNote.userservice.dao.RedisDao;
+import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.service.IUserService;
@@ -32,6 +37,9 @@ public class UserController {
 	@Autowired
 	private IUserService userservice;
    
+	@Autowired
+	private RedisDao redis;
+
 	
 	@ApiOperation(value="register new user")
 	@RequestMapping(value="/user/registerUser", method=RequestMethod.POST)
@@ -88,7 +96,8 @@ public class UserController {
 		System.out.println("user clicks the link");
 		userservice.activateUser(token);
 		String url=req.getRequestURL().toString().substring(0, req.getRequestURL().lastIndexOf("/")-15);
-		System.out.println(url);
+		System.out.println("get token url"+url);
+		
 		try {
 			response.sendRedirect(url +"#!/login" );
 		} catch (IOException e) {
@@ -98,29 +107,60 @@ public class UserController {
 		return new ResponseEntity<>(token,HttpStatus.FOUND);
 	}
 	
+	@RequestMapping(value="/user/resetPwd/{token:.+}",method=RequestMethod.GET)
+	public ResponseEntity<?> redirectTo(@PathVariable("token") String token,HttpServletResponse response,HttpServletRequest request){
+		String url=request.getRequestURL().toString().substring(0, request.getRequestURL().lastIndexOf("/")-14);
+		System.out.println(url);
+		try {
+			
+			response.sendRedirect(url+ "#!/resetPassword" );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(token,HttpStatus.ACCEPTED);
+		
+	}
+	
 	@ApiOperation(value="forgot password")
 	@RequestMapping(value="/user/forgotPassword" ,method=RequestMethod.POST)
 	public ResponseEntity<?>forgotPassword(@RequestBody User user,HttpServletRequest request,String token)
 	{
+		System.out.println("frontend comes under backend");
 		if(userservice.isEmailIdPresent(user.getEmailId()))	{
-			
+			if(userservice!=null)
 			logger.info("email already exist");
+			System.out.println("then FE goes inside forgot method");
 				boolean status=userservice.forgotPassword(user, request);
-			if(status ==true)
+				System.out.println("after entering under backend check for email id ");
+			if(status==true)
 			{
-				
 				logger.info("ok confirmation done. continue to reset password");
 				return new ResponseEntity<>(HttpStatus.ACCEPTED);
-			}	
+			}
+			else
+			{
+				try {
+					throw new EmailIdNotPresentException("Email id not present");
+				}catch(EmailIdNotPresentException e) {
+					logger.info("email not present exception");
+				}
+			}
 		}
 		return new ResponseEntity<>(HttpStatus.OK);		
 	}
 	
+	
+	
 	@ApiOperation(value="reset password")
-	@RequestMapping(value="/user/resetPassword/{token:.+}",method=RequestMethod.POST)
-	public  ResponseEntity<?> resetPassword(@PathVariable("token") String token,HttpServletRequest request,@RequestBody ResetPasswordDto reset){
+	@RequestMapping(value="/user/resetPassword",method=RequestMethod.POST)
+	public  ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto reset,HttpServletRequest request,HttpServletResponse response){
+		System.out.println("user clicks the link for reset password");
+		String token=request.getHeader("Author");
+		System.out.println(token);
 		String newPassword = reset.getPassword();
-		userservice.resetPassword(request,newPassword,token,reset);
+		userservice.resetPassword(newPassword,token,reset);
+		
 		return new ResponseEntity<>(token,HttpStatus.CREATED);
 	}
 }
