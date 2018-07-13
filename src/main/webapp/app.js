@@ -22,9 +22,18 @@ app.config(function($stateProvider,$urlRouterProvider)
 })
 .state('resetPassword',
 {
-url:'/resetPassword',
+url:'/resetPassword/:token',
 templateUrl: 'templates/resetPassword.html',
-controller:'userCtrl'
+controller:'userCtrl',
+params: {
+        token: null,
+}
+})
+.state('home',
+ {
+   url:'/home',
+   templateUrl:'templates/home.html',
+   controller:'userCtrl'
 })
 			  
   $urlRouterProvider.otherwise("/Register")

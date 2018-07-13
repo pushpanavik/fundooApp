@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -113,13 +114,24 @@ public class UserController {
 		System.out.println(url);
 		try {
 			
-			response.sendRedirect(url+ "#!/resetPassword" );
+			response.sendRedirect(url+ "#!/resetPassword/?token=" +token );
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return new ResponseEntity<>(token,HttpStatus.ACCEPTED);
 		
+	}
+	
+	@RequestMapping(value="/user/loginRedirect", method=RequestMethod.GET)
+	public ResponseEntity<?> loginRedirect(HttpServletResponse response){
+		try {
+			response.sendRedirect("#!/Login");
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>("redirecting to login",HttpStatus.CONTINUE);
 	}
 	
 	@ApiOperation(value="forgot password")
@@ -135,7 +147,7 @@ public class UserController {
 				System.out.println("after entering under backend check for email id ");
 			if(status==true)
 			{
-				logger.info("ok confirmation done. continue to reset password");
+				logger.info("ok confirmation done,continue to reset password");
 				return new ResponseEntity<>(HttpStatus.ACCEPTED);
 			}
 			else
@@ -154,13 +166,13 @@ public class UserController {
 	
 	@ApiOperation(value="reset password")
 	@RequestMapping(value="/user/resetPassword",method=RequestMethod.POST)
-	public  ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto reset,HttpServletRequest request,HttpServletResponse response){
+	public  ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto reset,HttpServletResponse response,@RequestHeader("token")String token){
 		System.out.println("user clicks the link for reset password");
-		String token=request.getHeader("Author");
-		System.out.println(token);
-		String newPassword = reset.getPassword();
-		userservice.resetPassword(newPassword,token,reset);
 		
-		return new ResponseEntity<>(token,HttpStatus.CREATED);
+		String newPassword = reset.getNewpassword();
+		userservice.resetPassword(newPassword,token,reset);
+				
+		return new ResponseEntity<>("token is send",HttpStatus.CREATED);
 	}
+	
 }

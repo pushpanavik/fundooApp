@@ -183,12 +183,13 @@ public class UserServiceImpl implements IUserService {
 		if(getredisToken.equals(token)) {
 			
 		User user1 = userDao.getUserById(id);
-		String nPassword = reset.getPassword();
+		String nPassword = reset.getNewpassword();
 		String hashCodePassword = encoder.encode(nPassword);
-		reset.setPassword(hashCodePassword);
+		reset.setNewpassword(hashCodePassword);
 		
 		userDao.updateRecord(user1);
 		logger.info("password reset successfully");
+		
 		
 	}
 	}
@@ -206,6 +207,7 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 	}
+
 
 	
 }
