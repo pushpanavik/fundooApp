@@ -34,12 +34,10 @@ public class NoteServiceImpl implements INoteService {
 	public void updateNode(Note note,String token) {
 		
 		int getId=VerifyJwtToken.getId(token);
-		User user=	noteDao.getUserById(getId);
-		long userIddb=user.getUserId();
-		
+		noteDao.getUserById(getId);
 		Note notes=noteDao.getNoteById(note.getId());
 		long noteuserId=notes.getCreatedBy().getUserId();
-		if(noteuserId==userIddb)
+		if(noteuserId==getId)
 		{
 			noteDao.updateNode(notes, token);
 		}

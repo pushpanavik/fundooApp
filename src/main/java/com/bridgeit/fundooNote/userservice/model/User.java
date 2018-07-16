@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -20,7 +21,7 @@ import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-@RequestMapping
+
 @Entity
 public class User implements Serializable {
 	
@@ -38,7 +39,8 @@ public class User implements Serializable {
 	private String emailId;
 	private String password;
 	private String address;
-	private String phoneNumber;
+	@NotNull
+	private long phoneNumber;
 	private boolean enabled;
 	
 	@OneToMany(fetch = FetchType.EAGER)
@@ -118,11 +120,11 @@ public class User implements Serializable {
 		this.address = address;
 	}
 
-	public String getPhoneNumber() {
+	public long getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
+	public void setPhoneNumber(long phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 

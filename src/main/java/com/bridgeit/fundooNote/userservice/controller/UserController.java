@@ -1,6 +1,9 @@
 package com.bridgeit.fundooNote.userservice.controller;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,8 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -30,20 +36,38 @@ import com.bridgeit.fundooNote.userservice.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+@PropertySource(value = { "classpath:application.properties" })
+@Api
 @RestController
 public class UserController {
-	
+ 
+	@Value("${login}")
+	String login;
+	@Value("${resetPassword}")
+	String resetPassword;
+	@Value("${dashboard}")
+	String dashboard;
 	private static Logger logger=LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired
 	private IUserService userservice;
    
-	@Autowired
-	private RedisDao redis;
-
-	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String home(Locale locale, Model model) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		return "home";
+	}
+		
 	@ApiOperation(value="register new user")
-	@RequestMapping(value="/user/registerUser", method=RequestMethod.POST)
+	@RequestMapping(value="user/registerUser", method=RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody User user,HttpServletRequest request)throws EmailAlreadyExistException
 	{
 		System.out.println(user.getEmailId()); 
@@ -100,7 +124,7 @@ public class UserController {
 		System.out.println("get token url"+url);
 		
 		try {
-			response.sendRedirect(url +"#!/login" );
+			response.sendRedirect(login);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,7 +138,8 @@ public class UserController {
 		System.out.println(url);
 		try {
 			
-			response.sendRedirect(url+ "#!/resetPassword/?token=" +token );
+			response.sendRedirect(resetPassword+ "/?token=" +token );
+			//System.out.println(resetPassword+ "/?token=" +token);
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -126,7 +151,7 @@ public class UserController {
 	@RequestMapping(value="/user/loginRedirect", method=RequestMethod.GET)
 	public ResponseEntity<?> loginRedirect(HttpServletResponse response){
 		try {
-			response.sendRedirect("#!/Login");
+			response.sendRedirect(dashboard);
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -165,7 +190,7 @@ public class UserController {
 	
 	
 	@ApiOperation(value="reset password")
-	@RequestMapping(value="/user/resetPassword",method=RequestMethod.POST)
+	@RequestMapping(value="user/resetPassword", method=RequestMethod.POST)
 	public  ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto reset,HttpServletResponse response,@RequestHeader("token")String token){
 		System.out.println("user clicks the link for reset password");
 		
