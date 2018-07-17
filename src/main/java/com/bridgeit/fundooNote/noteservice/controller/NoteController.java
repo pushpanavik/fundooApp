@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.noteservice.service.INoteService;
+import com.bridgeit.fundooNote.utilservice.Response;
 import com.bridgeit.fundooNote.utilservice.ValidateNote;
 
 import io.swagger.annotations.Api;
@@ -40,8 +41,8 @@ public class NoteController {
 	
 	
 	@ApiOperation(value = "add note ")
-	@RequestMapping( value="/user/addNote", method=RequestMethod.POST)
-	public ResponseEntity<?> createNote(@RequestBody  Note note,HttpServletRequest request,@RequestHeader("token")String token ) {
+	@RequestMapping( value="user/addNote", method=RequestMethod.POST)
+	public ResponseEntity<?> createNote(@RequestBody  Note note,HttpServletRequest request,@RequestHeader("token") String token ) {
 		
 	
 	boolean noteStatus	=ValidateNote.validateNote(note);
@@ -59,12 +60,12 @@ public class NoteController {
 	{
 		System.out.println(6);
 		
-		return new ResponseEntity<String>("Note is Empty",HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(new Response("note cannot be added",-5),HttpStatus.NO_CONTENT);
 	}
 	return null;
 	}
 	@ApiOperation(value = "update note ")
-	@RequestMapping(value="/user/updateNote", method=RequestMethod.PUT)
+	@RequestMapping(value="user/updateNote", method=RequestMethod.PUT)
 	public ResponseEntity<?> updateNote(@RequestBody Note note, HttpServletRequest request,@RequestHeader("token")String token){
 			
 		System.out.println("token of updateNode is" +token);
@@ -74,16 +75,15 @@ public class NoteController {
 		
 	}
 	@ApiOperation(value = "delete note ")
-	@RequestMapping(value="/user/deleteNote/{id}", method=RequestMethod.DELETE)
+	@RequestMapping(value="user/deleteNote/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<?> deleteNote( @PathVariable("id") long id){
 		
 		noteService.deleteNode(id);
-		
 		return new ResponseEntity<String>("Specified note successfully deleted",HttpStatus.NO_CONTENT);	
 	}
 	
 	@ApiOperation(value = "retrieve all note ")
-	@GetMapping("/user/displayNote")
+	@GetMapping("user/displayNote")
 	public ResponseEntity<?> ListNote(@RequestHeader("token")String token)
 	{ 
 		List<Note> not = noteService.displayAllNote(token);

@@ -21,7 +21,8 @@ public class NoteServiceImpl implements INoteService {
 	
 	@Transactional
 	public long addNote(Note note,String token) {
-		
+	
+		System.out.println("note token is" +token );
 	int getId=VerifyJwtToken.getId(token);
 	User user=	noteDao.getUserById(getId);
 	note.setCreatedBy(user);
@@ -34,7 +35,7 @@ public class NoteServiceImpl implements INoteService {
 	public void updateNode(Note note,String token) {
 		
 		int getId=VerifyJwtToken.getId(token);
-		noteDao.getUserById(getId);
+		//noteDao.getUserById(getId);
 		Note notes=noteDao.getNoteById(note.getId());
 		long noteuserId=notes.getCreatedBy().getUserId();
 		if(noteuserId==getId)

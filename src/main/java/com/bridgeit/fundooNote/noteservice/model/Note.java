@@ -1,8 +1,6 @@
 package com.bridgeit.fundooNote.noteservice.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,20 +11,15 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NotFound;
 
-import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 public class Note  {
 
-	
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

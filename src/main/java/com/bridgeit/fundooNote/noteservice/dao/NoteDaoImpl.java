@@ -45,7 +45,7 @@ public class NoteDaoImpl implements INoteDao {
 	public void updateNode(Note note,String token) {
 		Session session=factory.getCurrentSession();
 		note.setLastupdatedAt(new Date(System.currentTimeMillis()));
-		session.saveOrUpdate(note);		
+		session.update(note);		
 	}
 
 	@Override

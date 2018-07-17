@@ -16,8 +16,11 @@ public String getMsg() {
 public void setMsg(String msg) {
 	this.message = msg;
 }
- 
-public Response() {
+public Response(String message, int status) {
 	
+	this.message = message;
+	this.status = status;
 }
+ 
+
 }

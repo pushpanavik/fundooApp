@@ -15,6 +15,8 @@ public class ValidateNote {
 				}
 			}
 		}
+		
+		
 		return true;
 		
 	}

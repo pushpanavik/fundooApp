@@ -32,6 +32,7 @@ import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.service.IUserService;
+import com.bridgeit.fundooNote.utilservice.Response;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -83,13 +84,13 @@ public class UserController {
 					return new ResponseEntity<>("Registration failed",HttpStatus.CONFLICT);
 				}
 				else {
-					return new  ResponseEntity<>("User Registered Successfully",HttpStatus.OK);
+					return new  ResponseEntity<>(new Response("User successfully resgistered",100),HttpStatus.CREATED);
 				}
 	}
 	
 	@ApiOperation(value="login User")
 	@RequestMapping(value="/user/login", method=RequestMethod.POST)
-	public ResponseEntity<?> loginUser(@RequestBody User user,HttpServletRequest request,HttpServletResponse response ){		
+	public ResponseEntity<?> loginUser(@RequestBody User user,HttpServletRequest request,HttpServletResponse response){		
 		System.out.println("comes under login method");
 		
 		user.setEnabled(false);
@@ -97,18 +98,19 @@ public class UserController {
 		if(userservice.isEmailIdPresent(user.getEmailId())) {
 		
 			String token=userservice.validateUser(user);
+			
 				if(token!=null)
 				{
 					logger.info("logged In successsfully");
 					logger.info("your token generated is" +token);
-					response.setHeader("Author", token);
-							
-					return new ResponseEntity<String>(token,HttpStatus.OK);
+
+												
+					return new ResponseEntity<>(new Response(token,200),HttpStatus.ACCEPTED);
 				}
 		}
 		else
 		{
-			return new ResponseEntity<String>("Invalid username or password",HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new Response("Invalid username or password",-101),HttpStatus.NOT_FOUND);
 		}
 		return null;
 		

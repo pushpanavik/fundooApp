@@ -51,6 +51,7 @@ public class UserServiceImpl implements IUserService {
 
 		
 		if (getDetails != null) {
+			System.out.println(user.getPassword());
 			String generataHash = encoder.encode(user.getPassword());
 			
 			System.out.println(user.getPassword());
@@ -95,7 +96,11 @@ public class UserServiceImpl implements IUserService {
 
 			logger.info("plain text" + user.getPassword());
 			logger.info("encrypted text" + user2.getPassword());
-
+			
+			String generatedhash=encoder.encode(user.getPassword());
+			System.out.println("generatedhash for user is" +generatedhash );
+			System.out.println("db passwrd " +user2.getPassword());
+						
 			if (BCrypt.checkpw(user.getPassword(),user2.getPassword())) {
 
 				if(true)
@@ -104,7 +109,7 @@ public class UserServiceImpl implements IUserService {
 					String tokenGenerated = GenerateToken.generateToken(user2.getUserId());
 
 					logger.info("token successfully generated" + tokenGenerated);
-					
+										
 					return tokenGenerated;
 				}
 				
@@ -202,6 +207,8 @@ public class UserServiceImpl implements IUserService {
 		if(getredisToken.equals(token)) {
 			
 		User user=userDao.getUserById(id);
+		System.out.println(user);
+		System.out.println("inside ctivate usder");
 			user.setEnabled(true);
 			userDao.updateRecord(user);	
 		}

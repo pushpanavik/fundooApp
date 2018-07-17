@@ -51,7 +51,6 @@ public class User implements Serializable {
 	private List<Note> note=new ArrayList<>();
 
 	
-
 	public List<Note> getNote() {
 		return note;
 	}
