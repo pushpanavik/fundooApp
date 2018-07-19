@@ -54,7 +54,7 @@ public class NoteController {
 		if(id!=0)
 			
 		
-		return new ResponseEntity<String>("Note successfully added", HttpStatus.CREATED);
+		return new ResponseEntity<>(new Response(token,201), HttpStatus.CREATED);
 	}
 	else
 	{
