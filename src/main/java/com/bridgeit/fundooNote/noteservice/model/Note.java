@@ -8,10 +8,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -36,23 +38,23 @@ public class Note  {
 	private Date lastupdatedAt;
 	
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound
-	@JsonView
-	@JsonBackReference
-	private User createdBy;
+	@ManyToOne
+	@NotFound(action=NotFoundAction.IGNORE)
+	@JoinColumn(name="User_id")
+	private User user;
 	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Lob
 	@Column(columnDefinition="LONGBLOB")
 	private String image;
 
-		public User getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
-	}
 	
 	public long getId() {
 		return id;
@@ -149,5 +151,6 @@ public class Note  {
 		this.isTrash=false;
 		this.isPin=false;
 	}
-	
+
+
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -43,13 +44,9 @@ public class User implements Serializable {
 	private long phoneNumber;
 	private boolean enabled;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-	@Fetch(FetchMode.JOIN)
-	@NotFound
 	@JsonIgnore
-	@JsonManagedReference
-	private List<Note> note=new ArrayList<>();
-
+	@OneToMany(mappedBy="user",fetch=FetchType.EAGER,cascade=CascadeType.PERSIST)
+	private List<Note> note = new ArrayList<Note>();
 	
 	public List<Note> getNote() {
 		return note;

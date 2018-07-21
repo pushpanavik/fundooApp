@@ -10,7 +10,7 @@ public interface INoteDao {
 	public long addNote(Note note);
 	User getUserById(int userId);
 	public void deleteNode(long id);
-	public void updateNode(Note notes ,String token);
-	public Note getNoteById(long noteId);
+	public void updateNode(Note notes);
+	public Note getNoteById(int i);
 	public List<Note> displayAllNote(String token);
 }

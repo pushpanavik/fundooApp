@@ -25,7 +25,7 @@ public class NoteServiceImpl implements INoteService {
 		System.out.println("note token is" +token );
 	int getId=VerifyJwtToken.getId(token);
 	User user=	noteDao.getUserById(getId);
-	note.setCreatedBy(user);
+	note.setUser(user);
 	noteDao.addNote(note);
 	return noteDao.addNote(note);
 	}
@@ -35,13 +35,11 @@ public class NoteServiceImpl implements INoteService {
 	public void updateNode(Note note,String token) {
 		
 		int getId=VerifyJwtToken.getId(token);
-		//noteDao.getUserById(getId);
-		Note notes=noteDao.getNoteById(note.getId());
-		System.out.println("notesInfo " +notes.getColor()+notes.getDescription()+notes.getId()+notes.getTitle()+notes.getCreatedAt()+notes.getCreatedBy());
-		long noteuserId=notes.getCreatedBy().getUserId();
-		if(noteuserId==getId)
+		System.out.println("user" +note.getUser());
+		System.out.println("user id" +note.getUser().getUserId());
+		if(getId==note.getUser().getUserId())
 		{
-			noteDao.updateNode(notes, token);
+			noteDao.updateNode(note);
 		}
 		}
 

@@ -71,15 +71,15 @@ public class NoteController {
 		System.out.println("token of updateNode is" +token);
 		noteService.updateNode(note,token);
 		
-		return new ResponseEntity<String>("Note Succesfully updated",HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(new Response("note successfully updated",200),HttpStatus.ACCEPTED);
 		
 	}
 	@ApiOperation(value = "delete note ")
 	@RequestMapping(value="user/deleteNote/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<?> deleteNote( @PathVariable("id") long id){
-		
+	public ResponseEntity<?> deleteNote(@PathVariable("id") long id){
+		System.out.println("comes under deleted api");
 		noteService.deleteNode(id);
-		return new ResponseEntity<String>("Specified note successfully deleted",HttpStatus.NO_CONTENT);	
+		return new ResponseEntity<>(new Response("successfully note updated", 200),HttpStatus.NO_CONTENT);	
 	}
 	
 	@ApiOperation(value = "retrieve all note ")

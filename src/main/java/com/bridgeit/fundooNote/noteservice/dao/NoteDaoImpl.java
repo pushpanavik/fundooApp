@@ -42,7 +42,7 @@ public class NoteDaoImpl implements INoteDao {
 	}
 
 	@Override
-	public void updateNode(Note note,String token) {
+	public void updateNode(Note note) {
 		Session session=factory.getCurrentSession();
 		note.setLastupdatedAt(new Date(System.currentTimeMillis()));
 		session.update(note);		
@@ -63,12 +63,13 @@ public class NoteDaoImpl implements INoteDao {
 		List<Note> noteList = session.createQuery("from Note").list();
 		for(Note p : noteList){
 			System.out.println("noteList :" +p);
+			System.out.println("user info" +p.getUser());
 		}
 		return noteList;
 	}
 
 	@Override
-	public Note getNoteById(long noteId) {
+	public Note getNoteById(int noteId) {
 		
 		Session session = factory.getCurrentSession();
 		@SuppressWarnings("deprecation")
