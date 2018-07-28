@@ -46,7 +46,8 @@ public class HibernateConfiguration {
 		 
 		 sessionFactory.setHibernateProperties(hibernateProperties());
 		 sessionFactory.setAnnotatedClasses(User.class,Note.class);
-			
+		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.noteservice.model");	
+		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.userservice.model");
 			return sessionFactory;		
 	}
 	

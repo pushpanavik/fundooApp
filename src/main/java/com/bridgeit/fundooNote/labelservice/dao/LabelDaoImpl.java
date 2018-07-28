@@ -2,14 +2,17 @@ package com.bridgeit.fundooNote.labelservice.dao;
 
 
 
+import java.util.List;
+
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bridgeit.fundooNote.labelservice.model.Label;
-import com.bridgeit.fundooNote.labelservice.model.LabelDto;
+import com.bridgeit.fundooNote.userservice.model.User;
 
 @Repository
 public class LabelDaoImpl implements ILabelDao {
@@ -17,42 +20,60 @@ public class LabelDaoImpl implements ILabelDao {
 	
 
 	@Autowired
-	private SessionFactory sessionFactory;
-	
+	private SessionFactory factory;
+
 	@Override
-	public long addLabel(Label label) {
+	public long addLabel(Label label, User user) {
 		
-		Session session=sessionFactory.getCurrentSession();
-		session.save(label);
-		
+		Session getSession=(Session) factory.getCurrentSession();
+	
+		getSession.save(label);
 		return label.getLabelId();
 	}
+
 	@Override
-	public void deleteLabel(long id) {
-		Session session=sessionFactory.getCurrentSession();
-		Label label2=session.byId(Label.class).load(id);
-		session.delete(label2);
+	public User getUserById(int userId) {
 		
+		Session session = factory.getCurrentSession();
+		@SuppressWarnings("deprecation")
+		Criteria criteria = session.createCriteria(User.class).add(Restrictions.eq("userId", userId));
+		return (User) criteria.uniqueResult();
 	}
+
 	@Override
-	public void updateLabel(LabelDto labelDto, long id) {
-		Session session=sessionFactory.getCurrentSession();
+	public void deleteLabel(int id) {
 		
-		Label label2=session.byId(Label.class).load(id);
-		session.saveOrUpdate(label2);
-			
-		
-	}
-	/*@Override
-	public List<Note> displayAllNote(Note note){
-		
-		Session session = sessionFactory.getCurrentSession();
-		Transaction tx=session.beginTransaction();
-		List<Note> noteList = session.createQuery("from Note").list();
-		for(Note p : noteList){
-			System.out.println("noteList :" +p);
+		Session session=factory.getCurrentSession();
+		Label delLabel=session.byId(Label.class).load(id);
+		if(delLabel==null) {
+			System.out.println("Label is null");
 		}
-		return noteList;
-	}*/
+		session.delete(delLabel);
+	}
+
+	@Override
+	public void updateLabel(Label label) {
+		Session session=factory.getCurrentSession();
+		session.update(label);
+		
+		System.out.println("note sucessfully updated");
+		
+	}
+
+	@Override
+	public List<Label> getAllLabel(int id) {
+		
+		Session session = factory.getCurrentSession();
+		User user1=session.get(User.class, id);
+		return user1.getListOfLabels();
+	}
+
+	@Override
+	public Label getLabelById(int id) {
+		Session session=factory.getCurrentSession();
+		  return session.get(Label.class, id);
+	}
+	
+	
 
 }

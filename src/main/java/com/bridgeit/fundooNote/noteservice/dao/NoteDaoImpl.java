@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.model.User;
+import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 
 @Repository
@@ -23,12 +24,11 @@ public class NoteDaoImpl implements INoteDao {
 	private SessionFactory factory;
 	
 	@Override
-	public long addNote(Note note) {
+	public long addNote(Note note,User user) {
 		
 			Session getSession=(Session) factory.getCurrentSession();
-			note.setColor("white");
 			note.setCreatedAt(new Date(System.currentTimeMillis()));
-			note.setUpdatedAt(new Date(System.currentTimeMillis()));
+
 			getSession.save(note);
 			return note.getId();
 	}
@@ -44,28 +44,25 @@ public class NoteDaoImpl implements INoteDao {
 	@Override
 	public void updateNode(Note note) {
 		Session session=factory.getCurrentSession();
-		note.setLastupdatedAt(new Date(System.currentTimeMillis()));
-		session.update(note);		
+		session.update(note);
+		
+		System.out.println("note sucessfully updated");
 	}
 
 	@Override
-	public void deleteNode(long id) {
+	public void deleteNode(int id) {
 		Session session=factory.getCurrentSession();
 		Note note2=session.byId(Note.class).load(id);
 		session.delete(note2);	
 	}
 
 	@Override
-	public List<Note> displayAllNote(String token){
+	public List<Note> displayAllNote(User user){
 		
 		Session session = factory.getCurrentSession();
-		@SuppressWarnings("unchecked")
-		List<Note> noteList = session.createQuery("from Note").list();
-		for(Note p : noteList){
-			System.out.println("noteList :" +p);
-			System.out.println("user info" +p.getUser());
-		}
-		return noteList;
+		return session.get(User.class, user.getUserId()).getNote();
+		
+		
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.bridgeit.fundooNote.noteservice.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.noteservice.model.resDTO;
 import com.bridgeit.fundooNote.noteservice.service.INoteService;
 import com.bridgeit.fundooNote.utilservice.Response;
 import com.bridgeit.fundooNote.utilservice.ValidateNote;
@@ -50,10 +53,10 @@ public class NoteController {
 	if(noteStatus==true)
 	{
 		System.out.println(5);
+		System.out.println("note info from add method call"+note);
 		long id=noteService.addNote(note,token);
 		if(id!=0)
 			
-		
 		return new ResponseEntity<>(new Response(token,201), HttpStatus.CREATED);
 	}
 	else
@@ -66,9 +69,13 @@ public class NoteController {
 	}
 	@ApiOperation(value = "update note ")
 	@RequestMapping(value="user/updateNote", method=RequestMethod.PUT)
-	public ResponseEntity<?> updateNote(@RequestBody Note note, HttpServletRequest request,@RequestHeader("token")String token){
+	public ResponseEntity<?> updateNote(@RequestBody Note note,@RequestHeader("token")String token){
 			
 		System.out.println("token of updateNode is" +token);
+		
+		System.out.println("color : "+note.getColor());
+		
+		note.setLastupdatedAt(new Date(System.currentTimeMillis()));
 		noteService.updateNode(note,token);
 		
 		return new ResponseEntity<>(new Response("note successfully updated",200),HttpStatus.ACCEPTED);
@@ -76,7 +83,7 @@ public class NoteController {
 	}
 	@ApiOperation(value = "delete note ")
 	@RequestMapping(value="user/deleteNote/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<?> deleteNote(@PathVariable("id") long id){
+	public ResponseEntity<?> deleteNote(@PathVariable("id") int id){
 		System.out.println("comes under deleted api");
 		noteService.deleteNode(id);
 		return new ResponseEntity<>(new Response("successfully note updated", 200),HttpStatus.NO_CONTENT);	
@@ -86,8 +93,14 @@ public class NoteController {
 	@GetMapping("user/displayNote")
 	public ResponseEntity<?> ListNote(@RequestHeader("token")String token)
 	{ 
-		List<Note> not = noteService.displayAllNote(token);
-		return ResponseEntity.ok().body(not);
+		List<Note> note = noteService.displayAllNote(token);
+		List<resDTO> notedDtoList = new ArrayList<>();
+		for(Note note1 : note) {
+			System.out.println("note "+note);
+			resDTO obj = new resDTO(note1);
+			notedDtoList.add(obj);
+		}
+		return new ResponseEntity<>(notedDtoList,HttpStatus.OK);
 		
 	}
 	

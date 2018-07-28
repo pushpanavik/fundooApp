@@ -7,10 +7,10 @@ import com.bridgeit.fundooNote.userservice.model.User;
 
 
 public interface INoteDao {
-	public long addNote(Note note);
+	public long addNote(Note note,User user);
 	User getUserById(int userId);
-	public void deleteNode(long id);
+	public void deleteNode(int id);
 	public void updateNode(Note notes);
 	public Note getNoteById(int i);
-	public List<Note> displayAllNote(String token);
+	public List<Note> displayAllNote(User user);
 }

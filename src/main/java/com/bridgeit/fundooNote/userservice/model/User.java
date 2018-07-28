@@ -1,6 +1,5 @@
 package com.bridgeit.fundooNote.userservice.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +12,17 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.NotFound;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
+import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
-public class User implements Serializable {
+public class User {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -45,9 +38,24 @@ public class User implements Serializable {
 	private boolean enabled;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="user",fetch=FetchType.EAGER,cascade=CascadeType.PERSIST)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(mappedBy="user",cascade=CascadeType.PERSIST)
 	private List<Note> note = new ArrayList<Note>();
 	
+	@JsonIgnore
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(mappedBy="userDetails",cascade=CascadeType.PERSIST)
+	private List<Label> listOfLabels = new ArrayList<Label>();
+	
+	
+	public List<Label> getListOfLabels() {
+		return listOfLabels;
+	}
+
+	public void setListOfLabels(List<Label> listOfLabels) {
+		this.listOfLabels = listOfLabels;
+	}
+
 	public List<Note> getNote() {
 		return note;
 	}

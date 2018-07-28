@@ -9,9 +9,9 @@ public class ValidateNote {
 		if(note.getTitle()==null || note.getTitle().trim()==" " ) {
 			if(note.getColor()==null || note.getCreatedAt()==null ) {
 				if(note.getDescription()==null || note.getDescription().trim()==" ") {
-					if(note.getUpdatedAt()==null || note.getImage()==null) {
+					
 						return false;
-					}
+					
 				}
 			}
 		}
