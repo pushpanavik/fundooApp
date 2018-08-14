@@ -33,13 +33,24 @@ public class User {
 	private String emailId;
 	private String password;
 	private String address;
+	private String profilepicImage;
+	
+	public String getProfilepicImage() {
+		return profilepicImage;
+	}
+
+	public void setProfilepicImage(String profilepicImage) {
+		this.profilepicImage = profilepicImage;
+	}
+
 	@NotNull
 	private long phoneNumber;
 	private boolean enabled;
 	
-	@JsonIgnore
+	
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@OneToMany(mappedBy="user",cascade=CascadeType.PERSIST)
+	@JsonIgnore
 	private List<Note> note = new ArrayList<Note>();
 	
 	@JsonIgnore

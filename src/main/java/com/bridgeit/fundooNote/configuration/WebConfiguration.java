@@ -1,13 +1,19 @@
 package com.bridgeit.fundooNote.configuration;
 
 
+import java.util.ArrayList;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 @Configuration
 @EnableWebMvc
@@ -38,5 +44,23 @@ public class WebConfiguration implements WebMvcConfigurer{
 		.allowCredentials(false)
 		.maxAge(6000);
 	}
-	
+//	@Bean
+//	public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
+//		RequestMappingHandlerAdapter requestMappingHandlerAdapter = new RequestMappingHandlerAdapter();
+//		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+//		messageConverters.add(getJackson2HttpMessageConverter());
+//		requestMappingHandlerAdapter.setMessageConverters(messageConverters);
+//		return requestMappingHandlerAdapter;
+//	}
+
+	@Bean
+	public MappingJackson2HttpMessageConverter getJackson2HttpMessageConverter() {
+		return new MappingJackson2HttpMessageConverter();
+	}
+	@Bean(name = "multipartResolver")
+	public CommonsMultipartResolver multipartResolver() {
+	    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+	    multipartResolver.setMaxUploadSize(100000);
+	    return multipartResolver;
+	}
 }

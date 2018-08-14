@@ -1,7 +1,14 @@
 package com.bridgeit.fundooNote.configuration;
 
-import static org.hibernate.cfg.Environment.*;
-
+import static org.hibernate.cfg.AvailableSettings.C3P0_ACQUIRE_INCREMENT;
+import static org.hibernate.cfg.AvailableSettings.C3P0_MAX_SIZE;
+import static org.hibernate.cfg.AvailableSettings.C3P0_MAX_STATEMENTS;
+import static org.hibernate.cfg.AvailableSettings.C3P0_MIN_SIZE;
+import static org.hibernate.cfg.AvailableSettings.C3P0_TIMEOUT;
+import static org.hibernate.cfg.AvailableSettings.DIALECT;
+import static org.hibernate.cfg.AvailableSettings.FORMAT_SQL;
+import static org.hibernate.cfg.AvailableSettings.HBM2DDL_AUTO;
+import static org.hibernate.cfg.AvailableSettings.SHOW_SQL;
 
 import java.util.Properties;
 
@@ -18,8 +25,6 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.model.Note;
@@ -45,9 +50,10 @@ public class HibernateConfiguration {
 		 sessionFactory.setDataSource(dataSource());
 		 
 		 sessionFactory.setHibernateProperties(hibernateProperties());
-		 sessionFactory.setAnnotatedClasses(User.class,Note.class);
+		 sessionFactory.setAnnotatedClasses(User.class,Note.class,Label.class);
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.noteservice.model");	
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.userservice.model");
+		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.labelservice.model");
 			return sessionFactory;		
 	}
 	
@@ -109,6 +115,7 @@ public class HibernateConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 	
+
 	
 	
 	

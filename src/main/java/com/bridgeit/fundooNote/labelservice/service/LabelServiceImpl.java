@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.bridgeit.fundooNote.exceptionservice.TokenNotFound;
 import com.bridgeit.fundooNote.labelservice.dao.ILabelDao;
 import com.bridgeit.fundooNote.labelservice.model.Label;
+import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
@@ -29,12 +30,16 @@ public class LabelServiceImpl implements ILabel {
 	public void updateLabel(Label label, String token) {
 		int getId=VerifyJwtToken.getId(token);
 		
+		User user=userDao.getUserById(getId);
+		Label label2=labelDao.getLabelById(label.getLabelId());
+		label2.setName(label.getName());
+		
 		System.out.println("user id      : "+getId); 
-		System.out.println("user info inside label " +label.getUserDetails());
-		System.out.println("user note id : "+label.getUserDetails().getUserId());
-		if(getId==label.getUserDetails().getUserId())
+		System.out.println("user info inside label     " +label.getUserDetails());
+		System.out.println("user inside label id :          "+label.getUserDetails().getUserId());
+		if(getId==label.getUserDetails().getUserId() && label.getUserDetails().getUserId()!=0)
 		{
-			labelDao.updateLabel(label);
+			labelDao.updateLabel(label2);
 		}
 	}
 
@@ -82,6 +87,16 @@ public class LabelServiceImpl implements ILabel {
 			}
 			return null;
 		
+	}
+
+
+	@Transactional
+	@Override
+	public List<Note> getlabelNotes(int id, String token) {
+		
+		Label labels=labelDao.getLabelById(id);
+		List<Note> labelNote=labels.getNotes();
+		return labelNote;
 	}
 
 	

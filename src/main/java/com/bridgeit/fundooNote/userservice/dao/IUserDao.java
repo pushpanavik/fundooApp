@@ -12,4 +12,6 @@ public interface IUserDao {
 	public User getUserById(int id);
 	List<User> checkEmailId(String emailId);
 	public User updateRecord(User user);
+	public void updateUserById(int id);
+	public List<User> displayAllUser();
 }

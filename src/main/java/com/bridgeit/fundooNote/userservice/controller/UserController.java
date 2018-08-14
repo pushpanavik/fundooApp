@@ -2,12 +2,15 @@ package com.bridgeit.fundooNote.userservice.controller;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,12 +32,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgeit.fundooNote.configuration.MessageSender;
 import com.bridgeit.fundooNote.exceptionservice.EmailAlreadyExistException;
 import com.bridgeit.fundooNote.exceptionservice.EmailIdNotPresentException;
+import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.noteservice.model.resDTO;
 import com.bridgeit.fundooNote.userservice.dao.RedisDao;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.service.IUserService;
 import com.bridgeit.fundooNote.utilservice.Response;
+import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -94,6 +102,7 @@ public class UserController {
 		System.out.println("comes under login method");
 		
 		user.setEnabled(false);
+		
 		
 		if(userservice.isEmailIdPresent(user.getEmailId())) {
 		
@@ -202,4 +211,20 @@ public class UserController {
 		return new ResponseEntity<>("token is send",HttpStatus.CREATED);
 	}
 	
+	
+	@ApiOperation(value = "retrieve all user info ")
+	@GetMapping("getAllUser")
+	public ResponseEntity<?> displayUser()
+	{ 
+		List<User> userdetail = userservice.displayAllUserDetails();
+		
+		for(User user : userdetail) {
+			System.out.println("user "+user);	
+		}
+		return new ResponseEntity<>( userdetail,HttpStatus.OK);
+		
+	}
+
+
+
 }

@@ -1,24 +1,27 @@
 package com.bridgeit.fundooNote.noteservice.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.userservice.model.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 public class Note  {
@@ -37,26 +40,43 @@ public class Note  {
 	private boolean pin;
 	private boolean trash;
 	private Date lastupdatedAt;
+	private Date reminderDate;
 	
 	
+	
+
 	@ManyToOne
 	@NotFound(action=NotFoundAction.IGNORE)
 	@JoinColumn(name="User_id")
 	private User user;
 	
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	@Lob
-	@Column(columnDefinition="LONGBLOB")
+	@ManyToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinTable(name="NoteLabel",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="label_id"))
+	private List<Label> listOfLabels=new ArrayList<Label>();
+	
+	
+	
+	@Column
 	private String image;
 
 	
+	public Note()
+	{
+		this.archive=false;
+		this.color="white";
+		this.trash=false;
+		this.pin=false;
+	}
+
+	@Override
+	public String toString() {
+		return "Note [id=" + id + ", title=" + title + ", description=" + description + ", createdAt=" + createdAt
+				+ ", color=" + color + ", archive=" + archive + ", pin=" + pin + ", trash=" + trash + ", lastupdatedAt="
+				+ lastupdatedAt + ", reminderDate=" + reminderDate + ",  user=" + user + ", listOfLabels=" + listOfLabels
+				+ ", image=" + image + "]";
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -121,6 +141,39 @@ public class Note  {
 		this.trash = trash;
 	}
 
+	public Date getLastupdatedAt() {
+		return lastupdatedAt;
+	}
+
+	public void setLastupdatedAt(Date lastupdatedAt) {
+		this.lastupdatedAt = lastupdatedAt;
+	}
+
+	public Date getReminderDate() {
+		return reminderDate;
+	}
+
+	public void setReminderDate(Date reminderDate) {
+		this.reminderDate = reminderDate;
+	}
+
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public List<Label> getListOfLabels() {
+		return listOfLabels;
+	}
+
+	public void setListOfLabels(List<Label> listOfLabels) {
+		this.listOfLabels = listOfLabels;
+	}
+
 	public String getImage() {
 		return image;
 	}
@@ -129,30 +182,6 @@ public class Note  {
 		this.image = image;
 	}
 
-	public Date getLastupdatedAt() {
-		return lastupdatedAt;
-	}
-
-	public void setLastupdatedAt(Date lastupdatedAt) {
-		this.lastupdatedAt = lastupdatedAt;
-	}
-		
-	public Note()
-	{
-		this.archive=false;
-		this.color="white";
-		this.trash=false;
-		this.pin=false;
-	}
-
-	@Override
-	public String toString() {
-		return "Note [id=" + id + ", title=" + title + ", description=" + description + ", createdAt=" + createdAt
-				+ ", color=" + color + ", archive=" + archive + ", pin=" + pin + ", trash=" + trash + ", lastupdatedAt="
-				+ lastupdatedAt + ", user=" + user + ", image=" + image + "]";
-	}
-
-	
 	
 
 

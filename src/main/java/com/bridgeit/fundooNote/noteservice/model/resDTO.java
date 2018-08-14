@@ -1,13 +1,22 @@
 package com.bridgeit.fundooNote.noteservice.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.userservice.model.User;
 
 public class resDTO {
@@ -23,6 +32,32 @@ private int id;
 	private boolean pin;
 	private boolean trash;
 	private Date lastupdatedAt;
+	private Date reminderDate;
+	@ManyToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinTable(name="UserNoteLabel",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="label_id"))
+	private List<Label> listOfLabels=new ArrayList<Label>();
+	
+	public List<Label> getListOfLabels() {
+		return listOfLabels;
+	}
+
+	public void setListOfLabels(List<Label> listOfLabels) {
+		this.listOfLabels = listOfLabels;
+	}
+
+	
+	@Column
+	private String image;
+
+	public Date getReminderDate() {
+		return reminderDate;
+	}
+
+	public void setReminderDate(Date reminderDate) {
+		this.reminderDate = reminderDate;
+	}
+
 	@ManyToOne
 	@NotFound(action=NotFoundAction.IGNORE)
 	@JoinColumn(name="User_id")
@@ -42,7 +77,19 @@ private int id;
 		this.setTrash(note1.trash());
 		this.setLastupdatedAt(note1.getLastupdatedAt());
 		this.setUser(note1.getUser());
+		this.setReminderDate(note1.getReminderDate());
+		this.setImage(note1.getImage());
+		this.setListOfLabels(note1.getListOfLabels());
+		
 	}
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 	public int getId() {
 		return id;
 	}

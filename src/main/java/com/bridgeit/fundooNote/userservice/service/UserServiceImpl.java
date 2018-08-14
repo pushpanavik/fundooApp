@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgeit.fundooNote.configuration.MessageSender;
 import com.bridgeit.fundooNote.exceptionservice.EmailIdNotPresentException;
+import com.bridgeit.fundooNote.exceptionservice.TokenNotFound;
+import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
 import com.bridgeit.fundooNote.userservice.dao.RedisDao;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
@@ -87,7 +89,7 @@ public class UserServiceImpl implements IUserService {
 			System.out.println(user.getEmailId());
 		User user2 = userDao.getUserByEmaiId(user.getEmailId());
 		if (user2 == null) {
-			System.out.println("Email Id not found,NullPointer Exception ");
+			System.out.println("user 2 NullPointer Exception ");
 		} else {
 			System.out.println("comes again in validation method to check password and encrypted password");
 
@@ -103,7 +105,7 @@ public class UserServiceImpl implements IUserService {
 				if(true)
 				{
 					user.setEnabled(true);
-					String tokenGenerated = GenerateToken.generateToken(user2.getUserId());
+					String tokenGenerated = GenerateToken.generateUserToken(user2.getFirstname(), user2.getLastname(), user2.getUserId(), user2.getEmailId());
 
 					logger.info("token successfully generated" + tokenGenerated);
 										
@@ -124,13 +126,7 @@ public class UserServiceImpl implements IUserService {
 		System.out.println("FEnd comes in the dao ");
 		if (userlist.size() != 0) {
 			System.out.println("returns true from dao");
-			/*try {
-				throw new EmailAlreadyExistException("email already exist");
-			}
-			catch(EmailAlreadyExistException e)
-			{
-				e.printStackTrace();
-			}*/
+			
 			return true;
 			
 		}else {
@@ -211,7 +207,29 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 	}
+	
+	@Transactional
+	public String VerifyLogin(String email,String password) {
+		User user=userDao.getUserByEmaiId(email);
+		String newtoken=" ";
+		if(userDao==null) {
+			throw new EmailIdNotPresentException("this email id is not registered");
+		}
+		else if(BCrypt.checkpw(password, user.getPassword()) && user.isEnabled())
+		{
+			return newtoken=GenerateToken.generateUserToken(user.getFirstname(), user.getLastname(), user.getUserId(), user.getEmailId());
+			
+		}
+		return newtoken;
+	}
 
-
+	
+	@Transactional
+	@Override
+	 public List<User> displayAllUserDetails() {
+		return	userDao.displayAllUser();
+		
+	}
+	
 	
 }
