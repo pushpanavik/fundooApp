@@ -60,9 +60,7 @@ public class NoteDaoImpl implements INoteDao {
 	public List<Note> displayAllNote(User user){
 		
 		Session session = factory.getCurrentSession();
-		return session.get(User.class, user.getUserId()).getNote();
-		
-		
+		return session.get(User.class, user.getUserId()).getNote();	
 	}
 
 	@Override
@@ -73,6 +71,17 @@ public class NoteDaoImpl implements INoteDao {
 		Criteria criteria = session.createCriteria(Note.class).add(Restrictions.eq("id", noteId));
 		return (Note) criteria.uniqueResult();
 	}
+
+	@Override
+	public boolean isNotewiththatIdExist(int getId) {
+		Session session = factory.getCurrentSession();
+		@SuppressWarnings("deprecation")
+		Criteria criteria = session.createCriteria(Note.class);
+		criteria.add(Restrictions.eq("id", getId));
+		return true;
+	}
+
+	
 	      
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.userservice.model.User;
 
 public interface INoteService {
 
@@ -17,4 +18,7 @@ public interface INoteService {
 	String storeServerSideImage(MultipartFile file);
 
 	byte[] toGetImage(String name);
+	public void addCollaboratorOnNote(int userid, int noteid);
+	public boolean removeCollaboratorOnNote(int userid, int noteid);
+	public List<Note> getAllCollaboratedNotes(String token);
 }

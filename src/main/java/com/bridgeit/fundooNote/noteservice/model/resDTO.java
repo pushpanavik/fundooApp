@@ -27,6 +27,7 @@ private int id;
 	private String description;
 	private Date createdAt;
 	
+	
 	private String color;
 	private boolean archive;
 	private boolean pin;
@@ -45,8 +46,17 @@ private int id;
 	public void setListOfLabels(List<Label> listOfLabels) {
 		this.listOfLabels = listOfLabels;
 	}
-
+	@ManyToMany(mappedBy = "collaboratorNotes")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<User> collaboratedUser;
 	
+	public List<User> getCollaboratedUser() {
+		return collaboratedUser;
+	}
+
+	public void setCollaboratedUser(List<User> collaboratedUser) {
+		this.collaboratedUser = collaboratedUser;
+	}
 	@Column
 	private String image;
 
@@ -72,14 +82,16 @@ private int id;
 		this.description=note1.getDescription();
 		this.color=note1.getColor();
 		this.setCreatedAt(note1.getCreatedAt());
-		this.setArchive(note1.archive());
-		this.setPin(note1.pin());
-		this.setTrash(note1.trash());
 		this.setLastupdatedAt(note1.getLastupdatedAt());
 		this.setUser(note1.getUser());
 		this.setReminderDate(note1.getReminderDate());
 		this.setImage(note1.getImage());
 		this.setListOfLabels(note1.getListOfLabels());
+		this.setCollaboratedUser(note1.getCollaboratedUser());
+		this.setArchive(note1.isArchive());
+		this.setTrash(note1.isTrash());
+		this.setPin(note1.isPin());
+		
 		
 	}
 	public String getImage() {

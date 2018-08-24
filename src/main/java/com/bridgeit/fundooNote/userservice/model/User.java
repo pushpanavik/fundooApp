@@ -5,10 +5,12 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
@@ -35,8 +37,22 @@ public class User {
 	private String address;
 	private String profilepicImage;
 	
+	@ManyToMany
+	@LazyCollection(value = LazyCollectionOption.FALSE)
+	@JsonIgnore
+	@JoinTable(name="collaborator_Note",joinColumns =@JoinColumn( name="USER_Id"),inverseJoinColumns = @JoinColumn( name="Note_Id"))
+	private List<Note> collaboratorNotes;
+	
 	public String getProfilepicImage() {
 		return profilepicImage;
+	}
+
+	public List<Note> getCollaboratorNotes() {
+		return collaboratorNotes;
+	}
+
+	public void setCollaboratorNotes(List<Note> collaboratorNotes) {
+		this.collaboratorNotes = collaboratorNotes;
 	}
 
 	public void setProfilepicImage(String profilepicImage) {
@@ -143,5 +159,6 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
+	
 
 }

@@ -5,16 +5,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bridgeit.fundooNote.exceptionservice.NoteWiththatIdNotFoundException;
 import com.bridgeit.fundooNote.exceptionservice.TokenNotFound;
 import com.bridgeit.fundooNote.labelservice.dao.ILabelDao;
 import com.bridgeit.fundooNote.labelservice.dao.LabelDaoImpl;
@@ -49,7 +52,17 @@ public class NoteServiceImpl implements INoteService {
 	public long addNote(Note note,String token) {
 	
 		System.out.println("note token is" +token );
-		
+		String contentData=note.getDescription();
+		String space=" ";
+		String [] splitArray=contentData.split(" ");
+	
+		for(int i=0;i<1;i++)
+		{
+			System.out.println(splitArray[i]);
+			List<String> list=new ArrayList<>();
+			list.add(splitArray[i]);
+		}
+		System.out.println(space);
 	int getId=VerifyJwtToken.getId(token);
 	User user=	noteDao.getUserById(getId);
 	
@@ -63,16 +76,66 @@ public class NoteServiceImpl implements INoteService {
 	@Override
 	public void updateNode(Note note,String token) {
 		
-		int getId=VerifyJwtToken.getId(token);
+//		int getId=VerifyJwtToken.getId(token);
+//				
+//		System.out.println("user id      : "+getId); 
+//		System.out.println("pin stattus================"+note.isPin());
+//		System.out.println("archive status=============="+note.isArchive());
+//		System.out.println("trash status============"+note.isTrash());
+//		System.out.println("user note id : "+note.getId());
+//		if(getId==note.getUser().getUserId())
+//		{
+//						noteDao.updateNode(note);
+//		}
+		int getId=note.getId();
+		System.out.println("note id-------------->" +getId);
+		Note note2=noteDao.getNoteById(getId);
+		
+		int userid=VerifyJwtToken.getId(token);
+		System.out.println("user id--------------------->" +userid);
+		
+		boolean status=noteDao.isNotewiththatIdExist(getId);
+		if(status==true) {
+			
+			System.out.println("user id in the note------------>"+ note2.getUser().getUserId());
+			System.out.println();
+			if(note2.getUser().getUserId()==userid) {
+				System.out.println();
+				note2.setId(note.getId());
+				note2.setTitle(note.getTitle());
+				note2.setDescription(note.getDescription());
+				note2.setImage(note.getImage());
+				note2.setArchive(note.isArchive());
+				note2.setPin(note.isPin());
+				note2.setTrash(note.isTrash());
+				note2.setCollaboratedUser(note.getCollaboratedUser());
+				note2.setColor(note.getColor());
+				note2.setLastupdatedAt(note.getLastupdatedAt());
+				note2.setListOfLabels(note.getListOfLabels());
+				note2.setCreatedAt(note.getCreatedAt());
+				note2.setUser(note.getUser());
+				note2.setReminderDate(note.getReminderDate());
 				
-		System.out.println("user id      : "+getId); 
-		System.out.println("user info inside note " +note.getReminderDate());
-		System.out.println("user note id : "+note.getId());
-		if(getId==note.getUser().getUserId())
-		{
-			userDao.updateUserById(getId);
-			noteDao.updateNode(note);
+			noteDao.updateNode(note2);
+			}
+			else {
+				
+				note2.setTitle(note.getTitle());
+				note2.setDescription(note.getDescription());
+				noteDao.updateNode(note2);
 		}
+		}
+		
+		else
+		{
+			try {
+				throw new NoteWiththatIdNotFoundException("note with that id not found");
+			}catch(NoteWiththatIdNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+			
+			
 	}
 
 	@Transactional
@@ -107,9 +170,7 @@ public class NoteServiceImpl implements INoteService {
 	@Override
 	public void noteLabel(int noteid, int labelid) {
 		
-		System.out.println("noteid under noteLabel"+ noteid);
-		System.out.println("labelid under noteLabel"+ labelid);
-				
+		
 		Label labels=labelDao.getLabelById(labelid);
 		Note note=noteDao.getNoteById(noteid);
 		
@@ -124,9 +185,6 @@ public class NoteServiceImpl implements INoteService {
 	@Transactional
 	@Override
 	public boolean deleteLabel(int noteid, int labelid) {
-		
-		System.out.println("noteid under deleteLabel"+ noteid);
-		System.out.println("labelid under deleteLabel"+ labelid);
 		
 		Note note=noteDao.getNoteById(noteid);
 			
@@ -148,15 +206,13 @@ public class NoteServiceImpl implements INoteService {
 		}
 	}
 
-
+	@Transactional
 	@Override
 	public String storeServerSideImage(MultipartFile file) {
-		System.out.println("file inside serverside image....=>" +file);
-
+		
 		try {
 
 			byte[] bytes = file.getBytes();
-			System.out.println("path : " + path + File.separator + file.getOriginalFilename());
 
 			BufferedOutputStream stream = new BufferedOutputStream(
 					new FileOutputStream(path + File.separator + file.getOriginalFilename()));
@@ -175,8 +231,7 @@ public class NoteServiceImpl implements INoteService {
 		File serverFile = new File(path+File.separator+name);
 		
 		if (serverFile.exists()) {
-            
-		 System.out.println("r1");
+       
 		try {
 		 return Files.readAllBytes(serverFile.toPath());
 			
@@ -186,6 +241,75 @@ public class NoteServiceImpl implements INoteService {
 		}
 
 		return null;
+	}
+
+	@Transactional
+	@Override
+	public void addCollaboratorOnNote(int userid, int noteid) {
+		
+		Note note = noteDao.getNoteById(noteid);
+		User user = noteDao.getUserById(userid);
+		
+		List<User> collaboratedUser =  note.getCollaboratedUser();
+		collaboratedUser.add(user);
+		note.setCollaboratedUser(collaboratedUser);
+		
+		List<Note> collaboratedNotes = user.getCollaboratorNotes();
+		collaboratedNotes.add(note);
+		user.setCollaboratorNotes(collaboratedNotes);
+		
+		userDao.updateRecord(user);
+		noteDao.updateNode(note);
+		
+	}
+
+	@Transactional
+	@Override
+	public boolean removeCollaboratorOnNote(int userid, int noteid) {
+		System.out.println("Entering in to the note label service");
+		Note note = noteDao.getNoteById(noteid);
+		System.out.println("Note in collaborator:"+note);
+
+		User user = userDao.getUserById(userid);
+		System.out.println("user in collaborator:"+user);
+		
+		List<User> collaboratorUser =  note.getCollaboratedUser();
+		for(User user2:collaboratorUser) {
+			if(userid == user2.getUserId()) {
+				collaboratorUser.remove(user2);
+				break;
+			}
+		}
+	    note.setCollaboratedUser(collaboratorUser);
+	
+		List<Note> collaboratedNotes = user.getCollaboratorNotes();
+		for(Note note2 :collaboratedNotes) {
+			if(noteid == note2.getId()) {
+				collaboratedNotes.remove(note2);
+				break;
+			}
+		}
+		user.setCollaboratorNotes(collaboratedNotes);
+		
+		userDao.updateRecord(user);
+		noteDao.updateNode(note);
+		return true;
+	}
+
+	@Transactional
+	@Override
+	public List<Note> getAllCollaboratedNotes(String token) {
+		 
+		
+		int id = VerifyJwtToken.getId(token);
+		System.out.println("tokenid===========>" +id);
+		User user2=noteDao.getUserById(id);
+		List<Note> listofCollaboratedNotes = user2.getCollaboratorNotes();
+		//listofCollaboratedNotes.add(e)
+		for(Note note3: listofCollaboratedNotes) {
+			System.out.println(note3.getCollaboratedUser());
+		}
+		return listofCollaboratedNotes;
 	}
 
 }

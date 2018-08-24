@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
@@ -42,8 +40,44 @@ public class Note  {
 	private Date lastupdatedAt;
 	private Date reminderDate;
 	
+	public boolean isArchive() {
+		return archive;
+	}
+
+	public void setArchive(boolean archive) {
+		this.archive = archive;
+	}
+
+	public boolean isPin() {
+		return pin;
+	}
+
+	public void setPin(boolean pin) {
+		this.pin = pin;
+	}
+
+	public boolean isTrash() {
+		return trash;
+	}
+
+	public void setTrash(boolean trash) {
+		this.trash = trash;
+	}
+
 	
 	
+	@ManyToMany(mappedBy = "collaboratorNotes")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<User> collaboratedUser;
+	
+
+	public List<User> getCollaboratedUser() {
+		return collaboratedUser;
+	}
+
+	public void setCollaboratedUser(List<User> collaboratedUser) {
+		this.collaboratedUser = collaboratedUser;
+	}
 
 	@ManyToOne
 	@NotFound(action=NotFoundAction.IGNORE)
@@ -54,27 +88,23 @@ public class Note  {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name="NoteLabel",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="label_id"))
 	private List<Label> listOfLabels=new ArrayList<Label>();
-	
-	
-	
-	@Column
+		
 	private String image;
 
 	
 	public Note()
 	{
-		this.archive=false;
 		this.color="white";
-		this.trash=false;
-		this.pin=false;
 	}
+
+	
 
 	@Override
 	public String toString() {
 		return "Note [id=" + id + ", title=" + title + ", description=" + description + ", createdAt=" + createdAt
 				+ ", color=" + color + ", archive=" + archive + ", pin=" + pin + ", trash=" + trash + ", lastupdatedAt="
 				+ lastupdatedAt + ", reminderDate=" + reminderDate + ",  user=" + user + ", listOfLabels=" + listOfLabels
-				+ ", image=" + image + "]";
+				+ ", image=" + image +"]";
 	}
 
 	public int getId() {
@@ -117,30 +147,6 @@ public class Note  {
 		this.color = color;
 	}
 
-	public boolean archive() {
-		return archive;
-	}
-
-	public void setArchive(boolean archive) {
-		this.archive = archive;
-	}
-
-	public boolean pin() {
-		return pin;
-	}
-
-	public void setPin(boolean pin) {
-		this.pin = pin;
-	}
-
-	public boolean trash() {
-		return trash;
-	}
-
-	public void setTrash(boolean trash) {
-		this.trash = trash;
-	}
-
 	public Date getLastupdatedAt() {
 		return lastupdatedAt;
 	}
@@ -181,8 +187,6 @@ public class Note  {
 	public void setImage(String image) {
 		this.image = image;
 	}
-
-	
 
 
 }

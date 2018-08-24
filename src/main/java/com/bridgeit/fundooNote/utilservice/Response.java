@@ -1,5 +1,7 @@
 package com.bridgeit.fundooNote.utilservice;
 
+import com.bridgeit.fundooNote.userservice.model.UserDto;
+
 public class Response {
 private String message;
 private int status;
@@ -21,6 +23,7 @@ public Response(String message, int status) {
 	this.message = message;
 	this.status = status;
 }
+public Response() {}
  
 
 }

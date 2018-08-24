@@ -21,6 +21,7 @@ import com.bridgeit.fundooNote.userservice.dao.RedisDao;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
+import com.bridgeit.fundooNote.userservice.model.UserDto;
 import com.bridgeit.fundooNote.userservice.model.Validation;
 import com.bridgeit.fundooNote.utilservice.GenerateToken;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
@@ -108,7 +109,7 @@ public class UserServiceImpl implements IUserService {
 					String tokenGenerated = GenerateToken.generateUserToken(user2.getFirstname(), user2.getLastname(), user2.getUserId(), user2.getEmailId());
 
 					logger.info("token successfully generated" + tokenGenerated);
-										
+									
 					return tokenGenerated;
 				}
 				
@@ -226,8 +227,34 @@ public class UserServiceImpl implements IUserService {
 	
 	@Transactional
 	@Override
-	 public List<User> displayAllUserDetails() {
-		return	userDao.displayAllUser();
+	 public User displayUserDetails(String token) {
+		int id=VerifyJwtToken.getId(token);
+		 return userDao.getUserById(id);
+		
+	}
+
+	@Transactional
+	@Override
+	public void updateUserDetails(User user, String token) {
+		int getId=VerifyJwtToken.getId(token);
+		
+		
+		if(getId==user.getUserId())
+		{
+			User user2= userDao.updateUserById(getId);
+			user2.setProfilepicImage(user.getProfilepicImage());
+			
+		}
+		
+	}
+	
+
+	@Transactional
+	@Override
+	public List<User> displayAllUser() {
+		List<User> listofUsers=userDao.getallUsers();
+		
+		return listofUsers;
 		
 	}
 	

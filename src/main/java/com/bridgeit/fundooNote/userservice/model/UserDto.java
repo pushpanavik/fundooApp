@@ -2,11 +2,32 @@ package com.bridgeit.fundooNote.userservice.model;
 
 public class UserDto {
 
+	private int userId;
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 	private String firstname;
 	private String lastname;
 	private String emailId;
-	private String password;
-	private String address;
+	private String image;
+	private String token;
+	
+	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
 	public String getFirstname() {
 		return firstname;
 	}
@@ -25,32 +46,20 @@ public class UserDto {
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
+	
+	
 	public UserDto() {	
 	}
-	public UserDto(User user ) {
+	public UserDto(User obj ) {
 	
-		this.firstname = user.getFirstname();
-		this.lastname = user.getLastname();
-		this.emailId = user.getEmailId();
-		this.password = user.getPassword();
-		this.address = user.getAddress();
+		this.setFirstname(obj.getFirstname());
+		this.setLastname(obj.getLastname());
+		this.setEmailId(obj.getEmailId());
+		this.setImage(obj.getProfilepicImage());
 	}
 	@Override
 	public String toString() {
-		return "UserDto [firstname=" + firstname + ", lastname=" + lastname + ", emailId=" + emailId + ", password="
-				+ password + ", address=" + address + "]";
+		return "UserDto [User Id=" +userId +", firstname=" + firstname + ", lastname=" + lastname + ", emailId=" + emailId + "], image=" +image + "]";
 	}
 	
 	

@@ -26,6 +26,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.bridgeit.fundooNote.collaboratorservice.model.Collaborator;
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
@@ -54,6 +55,7 @@ public class HibernateConfiguration {
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.noteservice.model");	
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.userservice.model");
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.labelservice.model");
+		 
 			return sessionFactory;		
 	}
 	
@@ -76,7 +78,6 @@ public class HibernateConfiguration {
 		
 		Properties properties=new Properties();
 	properties.put(DIALECT, environment.getProperty("hibernate.dialect"));
-	properties.put(SHOW_SQL,environment.getProperty("hibernate.show_sql"));
 	properties.put(FORMAT_SQL, environment.getProperty("hibernate.format_sql"));
 	properties.put(HBM2DDL_AUTO, environment.getProperty("hibernate.hbm2ddl.auto"));
 	

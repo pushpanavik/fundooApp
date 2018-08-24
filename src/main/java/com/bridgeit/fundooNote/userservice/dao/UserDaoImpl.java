@@ -86,17 +86,28 @@ public class UserDaoImpl implements IUserDao {
 	}
 
 	@Override
-	public void updateUserById(int id) {
+	public User updateUserById(int id) {
 		Session session=(Session)sessionFactory.getCurrentSession();
 		User user=session.get(User.class, id);
 		session.update(user);
+		return user;
 		
 	}
 
 	@Override
-	public List<User> displayAllUser() {
+	public List<User> displayAllUser(String token) {
 		
-		return sessionFactory.getCurrentSession().createQuery("from User").list();
+		return (List<User>) sessionFactory.getCurrentSession().get(User.class,token);
+	}
+
+	@Override
+	public List<User> getallUsers() {
+		Session session = sessionFactory.getCurrentSession();
+		List<User> userList = session.createQuery("from User").list();
+		for(User p : userList){
+			System.out.println(p);
+		}
+		return userList;
 	}
 	
 	

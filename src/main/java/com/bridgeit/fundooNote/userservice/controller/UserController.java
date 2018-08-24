@@ -10,7 +10,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,18 +24,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bridgeit.fundooNote.configuration.MessageSender;
 import com.bridgeit.fundooNote.exceptionservice.EmailAlreadyExistException;
 import com.bridgeit.fundooNote.exceptionservice.EmailIdNotPresentException;
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.noteservice.model.resDTO;
-import com.bridgeit.fundooNote.userservice.dao.RedisDao;
-import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
+import com.bridgeit.fundooNote.userservice.model.UserDto;
 import com.bridgeit.fundooNote.userservice.service.IUserService;
 import com.bridgeit.fundooNote.utilservice.Response;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
@@ -92,7 +87,14 @@ public class UserController {
 					return new ResponseEntity<>("Registration failed",HttpStatus.CONFLICT);
 				}
 				else {
-					return new  ResponseEntity<>(new Response("User successfully resgistered",100),HttpStatus.CREATED);
+					UserDto user2=new UserDto();
+					user2.setFirstname(user.getFirstname());
+					user2.setLastname(user.getLastname());
+					user2.setEmailId(user.getEmailId());
+					user2.setUserId(user.getUserId());
+					user2.setImage(user.getProfilepicImage());
+									
+					return new  ResponseEntity<>(new Response("User successfully resgistered" +user2,100),HttpStatus.CREATED);
 				}
 	}
 	
@@ -112,9 +114,8 @@ public class UserController {
 				{
 					logger.info("logged In successsfully");
 					logger.info("your token generated is" +token);
-
 												
-					return new ResponseEntity<>(new Response(token,200),HttpStatus.ACCEPTED);
+					return new ResponseEntity<>(new Response(token, 200),HttpStatus.ACCEPTED);
 				}
 		}
 		else
@@ -212,19 +213,35 @@ public class UserController {
 	}
 	
 	
-	@ApiOperation(value = "retrieve all user info ")
-	@GetMapping("getAllUser")
-	public ResponseEntity<?> displayUser()
+	@ApiOperation(value = "retrieve user info ")
+	@GetMapping("getUser")
+	public ResponseEntity<?> displayUser(@RequestHeader("token")String token)
 	{ 
-		List<User> userdetail = userservice.displayAllUserDetails();
+	
 		
-		for(User user : userdetail) {
-			System.out.println("user "+user);	
-		}
+		User  userdetail = userservice.displayUserDetails(token);
+					System.out.println("from backend==========>"+userdetail.getProfilepicImage());
+		
 		return new ResponseEntity<>( userdetail,HttpStatus.OK);
 		
 	}
-
-
-
+	@ApiOperation(value="retrieve list of users")
+	@GetMapping("getAllUsers")
+	public ResponseEntity<?> getAllUsers(){
+		List<User> user = userservice.displayAllUser();
+		
+		for(User user2 : user) {
+			System.out.println("user info  "+user2);
+			
+			System.out.println("from backend of user info==========>"+user2);
+		}
+		return new ResponseEntity<>( user,HttpStatus.OK);
+	}
+	@ApiOperation(value = "update user ")
+	@RequestMapping(value="updateUser", method=RequestMethod.PUT)
+	public ResponseEntity<?> updateUser(@RequestBody User user,@RequestHeader("token")String token){	
+		userservice.updateUserDetails(user,token);
+				return new ResponseEntity<>(new Response("user successfully updated",200),HttpStatus.ACCEPTED);
+		
+	}
 }

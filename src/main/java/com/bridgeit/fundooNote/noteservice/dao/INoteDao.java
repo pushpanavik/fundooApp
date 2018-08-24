@@ -13,4 +13,6 @@ public interface INoteDao {
 	public void updateNode(Note notes);
 	public Note getNoteById(int i);
 	public List<Note> displayAllNote(User user);
+	public boolean isNotewiththatIdExist(int getId);
+	
 }
