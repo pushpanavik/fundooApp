@@ -1,5 +1,6 @@
 package com.bridgeit.fundooNote.jsoup;
 
+
 public class UrlData {
 
 	private String title;
@@ -15,6 +16,11 @@ public class UrlData {
 		this.domain = domain;
 	}
 
+	public UrlData() {
+		// TODO Auto-generated constructor stub
+	}
+
+	
 	public String getTitle() {
 		return title;
 	}

@@ -19,11 +19,13 @@ public class RedisConfig {
 		poolConfig.setMaxTotal(5);
 		poolConfig.setMaxIdle(30);
 		poolConfig.setMinIdle(10);
+		poolConfig.setMinEvictableIdleTimeMillis(60000);
 
 		JedisConnectionFactory connectionFactory = new JedisConnectionFactory(poolConfig);
 		connectionFactory.setUsePool(true);
 		connectionFactory.setHostName("127.0.0.1");
 		connectionFactory.setPort(6379);
+		connectionFactory.setTimeout(0);
 
 		return connectionFactory;
 	}

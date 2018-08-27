@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +18,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.userservice.model.User;
 
@@ -39,7 +39,49 @@ public class Note  {
 	private boolean trash;
 	private Date lastupdatedAt;
 	private Date reminderDate;
+	private String urlImage;
+	private String urlDomain;
+	private String urlTitle;
 	
+	
+//	@ManyToMany
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinTable(name="Note_URL",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="url_id"))
+//	private Set<UrlData> urldata;
+//	
+//	
+//	public Set<UrlData> getUrldata() {
+//		return urldata;
+//	}
+//
+//	public void setUrldata(Set<UrlData> urldata) {
+//		this.urldata = urldata;
+//	}
+
+	public String getUrlImage() {
+		return urlImage;
+	}
+
+	public void setUrlImage(String urlImage) {
+		this.urlImage = urlImage;
+	}
+
+	public String getUrlDomain() {
+		return urlDomain;
+	}
+
+	public void setUrlDomain(String urlDomain) {
+		this.urlDomain = urlDomain;
+	}
+
+	public String getUrlTitle() {
+		return urlTitle;
+	}
+
+	public void setUrlTitle(String urlTitle) {
+		this.urlTitle = urlTitle;
+	}
+
 	public boolean isArchive() {
 		return archive;
 	}
@@ -64,8 +106,6 @@ public class Note  {
 		this.trash = trash;
 	}
 
-	
-	
 	@ManyToMany(mappedBy = "collaboratorNotes")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<User> collaboratedUser;
@@ -104,7 +144,7 @@ public class Note  {
 		return "Note [id=" + id + ", title=" + title + ", description=" + description + ", createdAt=" + createdAt
 				+ ", color=" + color + ", archive=" + archive + ", pin=" + pin + ", trash=" + trash + ", lastupdatedAt="
 				+ lastupdatedAt + ", reminderDate=" + reminderDate + ",  user=" + user + ", listOfLabels=" + listOfLabels
-				+ ", image=" + image +"]";
+				+ ", image=" + image +", urlImage=" +urlImage+ ", urltitle=" +urlTitle+ ",urlDomain=" +urlDomain+ "]";
 	}
 
 	public int getId() {

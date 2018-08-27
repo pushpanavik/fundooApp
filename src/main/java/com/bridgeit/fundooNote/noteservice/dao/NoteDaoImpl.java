@@ -12,6 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bridgeit.fundooNote.jsoup.UrlData;
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
@@ -80,6 +81,8 @@ public class NoteDaoImpl implements INoteDao {
 		criteria.add(Restrictions.eq("id", getId));
 		return true;
 	}
+
+	
 
 	
 	      

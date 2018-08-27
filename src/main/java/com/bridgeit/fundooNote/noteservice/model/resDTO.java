@@ -7,7 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
+
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
@@ -26,14 +26,17 @@ private int id;
 	private String title;
 	private String description;
 	private Date createdAt;
-	
-	
 	private String color;
 	private boolean archive;
 	private boolean pin;
 	private boolean trash;
 	private Date lastupdatedAt;
 	private Date reminderDate;
+	private String urlImage;
+	private String urlTitle;
+	private String urlDomain;
+	
+	
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name="UserNoteLabel",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="label_id"))
@@ -91,8 +94,10 @@ private int id;
 		this.setArchive(note1.isArchive());
 		this.setTrash(note1.isTrash());
 		this.setPin(note1.isPin());
-		
-		
+		this.setUrlDomain(note1.getUrlDomain());
+		this.setUrlImage(note1.getUrlImage());
+		this.setUrlTitle(note1.getUrlTitle());
+			
 	}
 	public String getImage() {
 		return image;
@@ -165,5 +170,29 @@ private int id;
 		this.user = user;
 	}
 	
+
 	
+	public String getUrlImage() {
+		return urlImage;
+	}
+
+	public void setUrlImage(String urlImage) {
+		this.urlImage = urlImage;
+	}
+
+	public String getUrlTitle() {
+		return urlTitle;
+	}
+
+	public void setUrlTitle(String urlTitle) {
+		this.urlTitle = urlTitle;
+	}
+
+	public String getUrlDomain() {
+		return urlDomain;
+	}
+
+	public void setUrlDomain(String urlDomain) {
+		this.urlDomain = urlDomain;
+	}
 }

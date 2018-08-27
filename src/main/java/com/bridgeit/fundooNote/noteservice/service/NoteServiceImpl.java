@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgeit.fundooNote.exceptionservice.NoteWiththatIdNotFoundException;
 import com.bridgeit.fundooNote.exceptionservice.TokenNotFound;
+import com.bridgeit.fundooNote.jsoup.UrlData;
 import com.bridgeit.fundooNote.labelservice.dao.ILabelDao;
 import com.bridgeit.fundooNote.labelservice.dao.LabelDaoImpl;
 import com.bridgeit.fundooNote.labelservice.model.Label;
@@ -115,6 +116,9 @@ public class NoteServiceImpl implements INoteService {
 				note2.setCreatedAt(note.getCreatedAt());
 				note2.setUser(note.getUser());
 				note2.setReminderDate(note.getReminderDate());
+				note2.setUrlTitle(note.getUrlTitle());
+				note2.setUrlImage(note.getUrlImage());
+				note2.setUrlDomain(note.getUrlDomain());
 				
 			noteDao.updateNode(note2);
 			}
@@ -311,5 +315,7 @@ public class NoteServiceImpl implements INoteService {
 		}
 		return listofCollaboratedNotes;
 	}
+
+	
 
 }

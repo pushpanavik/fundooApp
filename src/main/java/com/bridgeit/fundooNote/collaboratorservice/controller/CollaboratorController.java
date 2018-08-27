@@ -21,45 +21,45 @@ import com.bridgeit.fundooNote.utilservice.Response;
 
 @RestController
 public class CollaboratorController {
-
-	@Autowired
-	private ICollaborator collaboratorservice;
-	
-	@RequestMapping(value="/addCollaborator" ,method = RequestMethod.POST)
-	  public ResponseEntity<?> createlabel(@RequestBody Collaborator collaborator,HttpServletRequest req,@RequestHeader("token") String token)
-	  {
-		System.out.println("inside backend");
-		  
-		  int status = collaboratorservice.addCollaborator(collaborator, token);
-			if (status > 0) {
-				Response res=new Response();
-				res.setMsg("Collaborator added Successfully");
-				res.setStatus(200);
-				return new ResponseEntity<>( res,HttpStatus.CREATED);
-
-			}
-			return new ResponseEntity<String>( "Collaborator cannot be added",HttpStatus.NOT_FOUND); 
-	  }
-	
-	@RequestMapping(value="/getallCollaborators" ,method = RequestMethod.GET)
-	  public ResponseEntity<List<Collaborator>> getAllCollaborators(HttpServletRequest req,@RequestHeader("token") String token)
-	  {
-		List<Collaborator> list=collaboratorservice.getAllCollaborators(token);  
-		 return new ResponseEntity<List<Collaborator>>( list,HttpStatus.CREATED); 
-		  
-	  }
-	
-	 @RequestMapping(value="/deleteCollaborator/{id}",method=RequestMethod.POST)
-	  public ResponseEntity<?> deleteNote(@PathVariable("id") int id,Label label,HttpServletRequest req,@RequestHeader("token") String token)
-	  {
-		  System.out.println("Going into the Controller...");
-		  
-		  collaboratorservice.deleteCollaborator(id, token);;
-		  Response res = new Response(token,id);
-			res.setMsg("Note deleteion is Done");
-			res.setStatus(200);
-		return new ResponseEntity<Response>(res,HttpStatus.CREATED);
-	  }  
+//
+//	@Autowired
+//	private ICollaborator collaboratorservice;
+//	
+//	@RequestMapping(value="/addCollaborator" ,method = RequestMethod.POST)
+//	  public ResponseEntity<?> createlabel(@RequestBody Collaborator collaborator,HttpServletRequest req,@RequestHeader("token") String token)
+//	  {
+//		System.out.println("inside backend");
+//		  
+//		  int status = collaboratorservice.addCollaborator(collaborator, token);
+//			if (status > 0) {
+//				Response res=new Response();
+//				res.setMsg("Collaborator added Successfully");
+//				res.setStatus(200);
+//				return new ResponseEntity<>( res,HttpStatus.CREATED);
+//
+//			}
+//			return new ResponseEntity<String>( "Collaborator cannot be added",HttpStatus.NOT_FOUND); 
+//	  }
+//	
+//	@RequestMapping(value="/getallCollaborators" ,method = RequestMethod.GET)
+//	  public ResponseEntity<List<Collaborator>> getAllCollaborators(HttpServletRequest req,@RequestHeader("token") String token)
+//	  {
+//		List<Collaborator> list=collaboratorservice.getAllCollaborators(token);  
+//		 return new ResponseEntity<List<Collaborator>>( list,HttpStatus.CREATED); 
+//		  
+//	  }
+//	
+//	 @RequestMapping(value="/deleteCollaborator/{id}",method=RequestMethod.POST)
+//	  public ResponseEntity<?> deleteNote(@PathVariable("id") int id,Label label,HttpServletRequest req,@RequestHeader("token") String token)
+//	  {
+//		  System.out.println("Going into the Controller...");
+//		  
+//		  collaboratorservice.deleteCollaborator(id, token);;
+//		  Response res = new Response(token,id);
+//			res.setMsg("Note deleteion is Done");
+//			res.setStatus(200);
+//		return new ResponseEntity<Response>(res,HttpStatus.CREATED);
+//	  }  
 	
 	
 

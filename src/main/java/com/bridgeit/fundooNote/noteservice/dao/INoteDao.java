@@ -15,4 +15,5 @@ public interface INoteDao {
 	public List<Note> displayAllNote(User user);
 	public boolean isNotewiththatIdExist(int getId);
 	
+	
 }

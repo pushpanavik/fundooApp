@@ -79,7 +79,9 @@ public class UserDaoImpl implements IUserDao {
 	}
 
 	@Override
-	public User updateRecord(User user) {
+	public User updateRecord(User user) 
+	{
+		System.out.println("r2");
 		Session session=sessionFactory.getCurrentSession();
 		session.update(user);
 		return user;

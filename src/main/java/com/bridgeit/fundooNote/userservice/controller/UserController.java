@@ -2,7 +2,6 @@ package com.bridgeit.fundooNote.userservice.controller;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -28,14 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgeit.fundooNote.exceptionservice.EmailAlreadyExistException;
 import com.bridgeit.fundooNote.exceptionservice.EmailIdNotPresentException;
-import com.bridgeit.fundooNote.noteservice.model.Note;
-import com.bridgeit.fundooNote.noteservice.model.resDTO;
 import com.bridgeit.fundooNote.userservice.model.ResetPasswordDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 import com.bridgeit.fundooNote.userservice.model.UserDto;
 import com.bridgeit.fundooNote.userservice.service.IUserService;
 import com.bridgeit.fundooNote.utilservice.Response;
-import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

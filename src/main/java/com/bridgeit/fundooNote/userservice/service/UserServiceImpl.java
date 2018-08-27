@@ -92,15 +92,10 @@ public class UserServiceImpl implements IUserService {
 		if (user2 == null) {
 			System.out.println("user 2 NullPointer Exception ");
 		} else {
-			System.out.println("comes again in validation method to check password and encrypted password");
-
+			
 			logger.info("plain text" + user.getPassword());
 			logger.info("encrypted text" + user2.getPassword());
-			
-			String generatedhash=encoder.encode(user.getPassword());
-			System.out.println("generatedhash for user is" +generatedhash );
-			System.out.println("db passwrd " +user2.getPassword());
-						
+												
 			if (BCrypt.checkpw(user.getPassword(),user2.getPassword())) {
 
 				if(true)
@@ -178,15 +173,22 @@ public class UserServiceImpl implements IUserService {
 	public void resetPassword( String newPassword, String token,ResetPasswordDto reset) {
 		
 		int id = VerifyJwtToken.getId(token);
+		System.out.println("user id : "+id);
 		String  getredisToken=redisCache.getToken((Integer.toString(id)));
-		if(getredisToken.equals(token)) {
-			
+		System.out.println("Stored token in redis : "+getredisToken);
+		
+		if(getredisToken.equals(token))
+		{
+	     System.out.println("r1");
 		User user1 = userDao.getUserById(id);
-		String nPassword = reset.getNewpassword();
-		String hashCodePassword = encoder.encode(nPassword);
+		
+		String hashCodePassword = encoder.encode(newPassword);
 		reset.setNewpassword(hashCodePassword);
+		System.out.println("hash password : "+hashCodePassword);
+		user1.setPassword(reset.getNewpassword());
 		
 		userDao.updateRecord(user1);
+		System.out.println("r3");
 		logger.info("password reset successfully");
 		
 		

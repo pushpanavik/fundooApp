@@ -26,21 +26,20 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.bridgeit.fundooNote.collaboratorservice.model.Collaborator;
+import com.bridgeit.fundooNote.jsoup.UrlData;
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.model.Note;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 
 @Configuration
-@ComponentScan(basePackages = { "com.bridgeit.fundooNote" })
-@PropertySource(value = { "classpath:application.properties" })
+@ComponentScan(basePackages = {"com.bridgeit.fundooNote"})
+@PropertySource(value = { "classpath:application.properties"})
 @EnableTransactionManagement
 public class HibernateConfiguration {
 
 	@Autowired
 	private Environment environment;
-	
 	
 
 	@Bean
@@ -55,6 +54,7 @@ public class HibernateConfiguration {
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.noteservice.model");	
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.userservice.model");
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.labelservice.model");
+//		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.jsoup");
 		 
 			return sessionFactory;		
 	}

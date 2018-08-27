@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ public class NoteController {
 
 	@Autowired
 	private INoteService noteService;
+	
 	
 	
 	
@@ -163,14 +166,21 @@ public class NoteController {
 
 	@ApiOperation(value="extract some content from url")
 	@RequestMapping(value = "getUrlData", method = RequestMethod.POST)
-	public ResponseEntity<?> getUrlData(HttpServletRequest request) {
+	public ResponseEntity<?> getUrlData(HttpServletRequest request,@RequestHeader("token")String token,@RequestBody Note note) {
 
 	String urlArray = request.getHeader("url");
 		WebScrapper link=new WebScrapper();
-		UrlData urlData = null;
-
+		UrlData urlData = new UrlData();
+		
 		try {
+			
 			urlData = link.getUrlMetaData(urlArray);
+			note.setUrlTitle(urlData.getTitle());
+			note.setUrlImage(urlData.getImageUrl());
+			note.setUrlDomain(urlData.getDomain());
+			
+			noteService.updateNode(note, token);
+		//	urlData2=noteService.addUrlData(urlData);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -194,8 +204,6 @@ public class NoteController {
 	@ApiOperation(value="delete collaborator from note")
 	  @RequestMapping(value = "removeCollaboratorOnNote/{id}/{id1}", method = RequestMethod.GET)
 		public ResponseEntity<?> deleteCollaborator(@PathVariable("id") int userid,@PathVariable("id1") int noteid) {
-			System.out.println("noteId : " + noteid);
-			System.out.println("userid : " + userid);
 	 if(noteService.removeCollaboratorOnNote(userid, noteid))
 	 {
 		 Response res = new Response(null, noteid);
@@ -211,12 +219,22 @@ public class NoteController {
 	  @RequestMapping(value="getAllCollaboratedNotes" ,method = RequestMethod.GET)
 	  public ResponseEntity<List<Note>> getAllCollaboratedNotes(HttpServletRequest req,@RequestHeader("token")String token)
 	  {
-		  System.out.println("Token in get all collaborator:"+token);
 		  List<Note> list=noteService.getAllCollaboratedNotes(token);
-		  System.out.println("NOTE LIST SIZE::"+list.size());
 		 return new ResponseEntity<List<Note>>( list,HttpStatus.CREATED); 
 		  
 	  }
-	  
+	 
+	@ApiOperation(value="add UrlData ")
+	@RequestMapping(value="addUrlData", method= RequestMethod.GET)
+	public ResponseEntity<?> addurlOnNote(HttpServletRequest request,@PathVariable("id") int noteid,@PathVariable("id1") int urlid){
+		System.out.println("noteid============>" +noteid);
+		System.out.println("url id ================> +urlid");
+		return null;
+	}
 	
+	public ResponseEntity<?> removeUrl(@RequestBody Note note,@RequestHeader("token")String token){
+		
+		return null;
+		
+	}
 }
