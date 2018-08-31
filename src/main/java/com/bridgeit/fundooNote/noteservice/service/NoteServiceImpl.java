@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -19,9 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgeit.fundooNote.exceptionservice.NoteWiththatIdNotFoundException;
 import com.bridgeit.fundooNote.exceptionservice.TokenNotFound;
-import com.bridgeit.fundooNote.jsoup.UrlData;
 import com.bridgeit.fundooNote.labelservice.dao.ILabelDao;
-import com.bridgeit.fundooNote.labelservice.dao.LabelDaoImpl;
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.dao.INoteDao;
 import com.bridgeit.fundooNote.noteservice.model.Note;
@@ -77,17 +74,7 @@ public class NoteServiceImpl implements INoteService {
 	@Override
 	public void updateNode(Note note,String token) {
 		
-//		int getId=VerifyJwtToken.getId(token);
-//				
-//		System.out.println("user id      : "+getId); 
-//		System.out.println("pin stattus================"+note.isPin());
-//		System.out.println("archive status=============="+note.isArchive());
-//		System.out.println("trash status============"+note.isTrash());
-//		System.out.println("user note id : "+note.getId());
-//		if(getId==note.getUser().getUserId())
-//		{
-//						noteDao.updateNode(note);
-//		}
+
 		int getId=note.getId();
 		System.out.println("note id-------------->" +getId);
 		Note note2=noteDao.getNoteById(getId);
@@ -96,40 +83,40 @@ public class NoteServiceImpl implements INoteService {
 		System.out.println("user id--------------------->" +userid);
 		
 		boolean status=noteDao.isNotewiththatIdExist(getId);
-		if(status==true) {
-			
-			System.out.println("user id in the note------------>"+ note2.getUser().getUserId());
-			System.out.println();
-			if(note2.getUser().getUserId()==userid) {
-				System.out.println();
-				note2.setId(note.getId());
-				note2.setTitle(note.getTitle());
-				note2.setDescription(note.getDescription());
-				note2.setImage(note.getImage());
-				note2.setArchive(note.isArchive());
-				note2.setPin(note.isPin());
-				note2.setTrash(note.isTrash());
-				note2.setCollaboratedUser(note.getCollaboratedUser());
-				note2.setColor(note.getColor());
-				note2.setLastupdatedAt(note.getLastupdatedAt());
-				note2.setListOfLabels(note.getListOfLabels());
-				note2.setCreatedAt(note.getCreatedAt());
-				note2.setUser(note.getUser());
-				note2.setReminderDate(note.getReminderDate());
-				note2.setUrlTitle(note.getUrlTitle());
-				note2.setUrlImage(note.getUrlImage());
-				note2.setUrlDomain(note.getUrlDomain());
+		if(status==true) 
+		{
+				if(note2.getUser().getUserId()==userid) 
+				{
+					note2.setId(note.getId());
+					note2.setTitle(note.getTitle());
+					note2.setDescription(note.getDescription());
+					note2.setImage(note.getImage());
+					note2.setArchive(note.isArchive());
+					note2.setPin(note.isPin());
+					note2.setTrash(note.isTrash());
+					note2.setCollaboratedUser(note.getCollaboratedUser());
+					note2.setColor(note.getColor());
+					note2.setLastupdatedAt(note.getLastupdatedAt());
+					note2.setListOfLabels(note.getListOfLabels());
+					note2.setCreatedAt(note.getCreatedAt());
+					note2.setUser(note.getUser());
+					note2.setReminderDate(note.getReminderDate());
+					note2.setUrlTitle(note.getUrlTitle());
+					note2.setUrlImage(note.getUrlImage());
+					note2.setUrlDomain(note.getUrlDomain());
+					note2.setUrlFlag(note.isUrlFlag());
 				
-			noteDao.updateNode(note2);
+					noteDao.updateNode(note2);
+//					long d=note2.getReminderDate().getTime();
+//					System.out.println(d);
 			}
-			else {
-				
+			else
+			{
 				note2.setTitle(note.getTitle());
 				note2.setDescription(note.getDescription());
 				noteDao.updateNode(note2);
+			}
 		}
-		}
-		
 		else
 		{
 			try {
@@ -299,6 +286,19 @@ public class NoteServiceImpl implements INoteService {
 		noteDao.updateNode(note);
 		return true;
 	}
+	
+
+	@Override
+	@Transactional
+	public List<User> getAllCollaboratedUsers(int id) {
+
+		System.out.println("id : " + id);
+
+		Note note = noteDao.getNoteById(id);
+
+		return note.getCollaboratedUser();
+
+	}
 
 	@Transactional
 	@Override
@@ -315,7 +315,28 @@ public class NoteServiceImpl implements INoteService {
 		}
 		return listofCollaboratedNotes;
 	}
+	
+	@Transactional
+	@Override
+	public void deleteTrashNotes() {
+		noteDao.deleteTrashedNote();
+		
+	}
 
+	@Transactional
+	@Override
+	public boolean checkIfEmailIdOnNoteAlreadyExist(int userid) {
+	User user=noteDao.getUserById(userid);
+	if(user==null) {
+		return false;
+	}
+	else {
+		System.out.println("user is found ");
+		return true;
+	}
+	}
+
+	
 	
 
 }

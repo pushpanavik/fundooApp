@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -82,7 +83,20 @@ public class NoteDaoImpl implements INoteDao {
 		return true;
 	}
 
+
+	@Override
+	public void deleteTrashedNote() {
+		Date date=new Date(new Date().getTime()-(20*1000));
+		Session session=factory.getCurrentSession();
 	
+		Query query=session.createQuery("delete from Note where trash=true AND lastupdatedAt <:date");
+		query.setParameter("date", date);
+		int count=query.executeUpdate();
+		if(count>0) {
+			System.out.println("Number of notes delted " +count);
+		}
+		
+	}
 
 	
 	      

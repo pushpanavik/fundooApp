@@ -35,6 +35,7 @@ private int id;
 	private String urlImage;
 	private String urlTitle;
 	private String urlDomain;
+	private boolean urlflag;
 	
 	
 	@ManyToMany
@@ -97,6 +98,7 @@ private int id;
 		this.setUrlDomain(note1.getUrlDomain());
 		this.setUrlImage(note1.getUrlImage());
 		this.setUrlTitle(note1.getUrlTitle());
+		this.setUrlflag(note1.isUrlFlag());
 			
 	}
 	public String getImage() {
@@ -194,5 +196,13 @@ private int id;
 
 	public void setUrlDomain(String urlDomain) {
 		this.urlDomain = urlDomain;
+	}
+
+	public boolean isUrlflag() {
+		return urlflag;
+	}
+
+	public void setUrlflag(boolean urlflag) {
+		this.urlflag = urlflag;
 	}
 }

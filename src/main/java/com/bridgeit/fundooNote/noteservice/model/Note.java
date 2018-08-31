@@ -42,21 +42,15 @@ public class Note  {
 	private String urlImage;
 	private String urlDomain;
 	private String urlTitle;
+	private boolean urlFlag;
 	
-	
-//	@ManyToMany
-//	@LazyCollection(LazyCollectionOption.FALSE)
-//	@JoinTable(name="Note_URL",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="url_id"))
-//	private Set<UrlData> urldata;
-//	
-//	
-//	public Set<UrlData> getUrldata() {
-//		return urldata;
-//	}
-//
-//	public void setUrldata(Set<UrlData> urldata) {
-//		this.urldata = urldata;
-//	}
+	public boolean isUrlFlag() {
+		return urlFlag;
+	}
+
+	public void setUrlFlag(boolean urlFlag) {
+		this.urlFlag = urlFlag;
+	}
 
 	public String getUrlImage() {
 		return urlImage;

@@ -7,6 +7,7 @@ import com.bridgeit.fundooNote.userservice.model.User;
 
 
 public interface INoteDao {
+	
 	public long addNote(Note note,User user);
 	User getUserById(int userId);
 	public void deleteNode(int id);
@@ -14,6 +15,7 @@ public interface INoteDao {
 	public Note getNoteById(int i);
 	public List<Note> displayAllNote(User user);
 	public boolean isNotewiththatIdExist(int getId);
+	public void deleteTrashedNote();
 	
 	
 }

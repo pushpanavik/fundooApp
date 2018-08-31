@@ -60,4 +60,6 @@ public class WebConfiguration implements WebMvcConfigurer{
 	    multipartResolver.setMaxUploadSize(2000000);
 	    return multipartResolver;
 	}
+	
+	
 }
