@@ -3,11 +3,12 @@ package com.bridgeit.fundooNote.jsoup;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import com.bridgeit.fundooNote.noteservice.model.UrlData;
 
 public class WebScrapper {
 	
@@ -21,6 +22,7 @@ public class WebScrapper {
 		StringBuilder sb = new StringBuilder();
 
 		  Connection con = Jsoup.connect(url);
+		  System.out.println("25" +url);
 
 		    /* this browseragant thing is important to trick servers into sending us the LARGEST versions of the images */
 //		    con.userAgent(Constants.BROWSER_USER_AGENT);

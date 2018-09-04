@@ -1,14 +1,19 @@
 package com.bridgeit.fundooNote.noteservice.controller;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +30,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bridgeit.fundooNote.jsoup.UrlData;
-import com.bridgeit.fundooNote.jsoup.WebScrapper;
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.noteservice.model.UrlData;
 import com.bridgeit.fundooNote.noteservice.model.resDTO;
 import com.bridgeit.fundooNote.noteservice.service.INoteService;
 import com.bridgeit.fundooNote.userservice.model.User;
@@ -68,8 +72,10 @@ public class NoteController {
 		System.out.println("note info from add method call"+note);
 		long id=noteService.addNote(note,token);
 		if(id!=0)
-			
-		return new ResponseEntity<>(new Response(token,201), HttpStatus.CREATED);
+		{
+			return new ResponseEntity<>(new Response(token,201), HttpStatus.CREATED);	
+		}	
+		
 	}
 	else
 	{
@@ -113,7 +119,6 @@ public class NoteController {
 			notedDtoList.add(obj);	
 		}
 		return new ResponseEntity<>( notedDtoList,HttpStatus.OK);
-		
 	}
 	
 	@ApiOperation(value = "update note and label ")
@@ -171,30 +176,6 @@ public class NoteController {
 		return new ResponseEntity<>(file,HttpStatus.OK);
 	}
 
-	/**************************************Get Url *******************************************/
-	@ApiOperation(value="extract some content from url")
-	@RequestMapping(value = "getUrlData", method = RequestMethod.POST)
-	public ResponseEntity<?> getUrlData(HttpServletRequest request,@RequestHeader("token")String token,@RequestBody Note note) {
-
-	String urlArray = request.getHeader("url");
-		WebScrapper link=new WebScrapper();
-		UrlData urlData = new UrlData();
-		
-		try {
-			urlData = link.getUrlMetaData(urlArray);
-			
-			note.setUrlTitle(urlData.getTitle());
-			note.setUrlImage(urlData.getImageUrl());
-			note.setUrlDomain(urlData.getDomain());
-		
-			noteService.updateNode(note, token);
-						
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return ResponseEntity.ok(urlData);
-	}
 	
 	/**************************************Add  Collaborator *******************************************/
 	@ApiOperation(value="add collaborator on note")
@@ -233,12 +214,6 @@ public class NoteController {
 
 			List<User> list = noteService.getAllCollaboratedUsers(id);
 			
-			if(list.isEmpty())
-			{
-
-				System.out.println("list is empty2");
-		     return new ResponseEntity<>(HttpStatus.NO_CONTENT);		
-			}
 			return new ResponseEntity<>(list, HttpStatus.OK);
 
 		}
@@ -249,33 +224,17 @@ public class NoteController {
 		{
 
 			List<Note> list = noteService.getAllCollaboratedNotes(token);
-			if(list.isEmpty())
-			{
-				System.out.println("list is empty1");
-		     return new ResponseEntity<>(HttpStatus.NO_CONTENT);		
-			}
+		
 			return new ResponseEntity<List<Note>>(list, HttpStatus.OK);
 
 		}
 	
+		/******************************remove url link ************************************************************/
 	@RequestMapping(value="user/removeUrl", method=RequestMethod.PUT)
 	public ResponseEntity<?> removeUrl(@RequestBody Note note,@RequestHeader("token")String token){
-		
-		boolean  flag=false;
-		note.setUrlFlag(flag);
-		if(note.isUrlFlag()==false) {
-			noteService.updateNode(note,token);
-		}
-		else {
-			flag=true;
-			note.setUrlFlag(flag);
-			note.setUrlDomain("");
-			note.setUrlImage("");
-			note.setUrlTitle("");
-			noteService.updateNode(note, token);
-		}
-		
-				
+					
+			
+			noteService.updateNode(note, token);		
 		return new ResponseEntity<>(new Response("note successfully updated",200),HttpStatus.ACCEPTED);
 		
 	}

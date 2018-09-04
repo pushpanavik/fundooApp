@@ -3,13 +3,17 @@ package com.bridgeit.fundooNote.noteservice.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -32,12 +36,19 @@ private int id;
 	private boolean trash;
 	private Date lastupdatedAt;
 	private Date reminderDate;
-	private String urlImage;
-	private String urlTitle;
-	private String urlDomain;
-	private boolean urlflag;
+	
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<UrlData> link;
 	
 	
+	public Set<UrlData> getLink() {
+		return link;
+	}
+
+	public void setLink(Set<UrlData> link) {
+		this.link = link;
+	}
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name="UserNoteLabel",joinColumns=@JoinColumn(name="note_id"),inverseJoinColumns=@JoinColumn(name="label_id"))
@@ -95,10 +106,7 @@ private int id;
 		this.setArchive(note1.isArchive());
 		this.setTrash(note1.isTrash());
 		this.setPin(note1.isPin());
-		this.setUrlDomain(note1.getUrlDomain());
-		this.setUrlImage(note1.getUrlImage());
-		this.setUrlTitle(note1.getUrlTitle());
-		this.setUrlflag(note1.isUrlFlag());
+		this.setLink(note1.getUrls());
 			
 	}
 	public String getImage() {
@@ -174,35 +182,4 @@ private int id;
 	
 
 	
-	public String getUrlImage() {
-		return urlImage;
-	}
-
-	public void setUrlImage(String urlImage) {
-		this.urlImage = urlImage;
-	}
-
-	public String getUrlTitle() {
-		return urlTitle;
-	}
-
-	public void setUrlTitle(String urlTitle) {
-		this.urlTitle = urlTitle;
-	}
-
-	public String getUrlDomain() {
-		return urlDomain;
-	}
-
-	public void setUrlDomain(String urlDomain) {
-		this.urlDomain = urlDomain;
-	}
-
-	public boolean isUrlflag() {
-		return urlflag;
-	}
-
-	public void setUrlflag(boolean urlflag) {
-		this.urlflag = urlflag;
-	}
 }

@@ -106,6 +106,8 @@ public interface INoteService {
 	 */
 	public List<User> getAllCollaboratedUsers(int id);
 	
+	public void removeUrl(String token, Note note, int id);
+	
 
 	
 }

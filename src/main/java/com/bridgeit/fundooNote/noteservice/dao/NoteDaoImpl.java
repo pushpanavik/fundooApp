@@ -6,17 +6,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.bridgeit.fundooNote.jsoup.UrlData;
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.noteservice.model.UrlData;
 import com.bridgeit.fundooNote.userservice.model.User;
-import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 
 @Repository
@@ -47,8 +46,6 @@ public class NoteDaoImpl implements INoteDao {
 	public void updateNode(Note note) {
 		Session session=factory.getCurrentSession();
 		session.update(note);
-		
-		System.out.println("note sucessfully updated");
 	}
 
 	@Override
@@ -98,7 +95,33 @@ public class NoteDaoImpl implements INoteDao {
 		
 	}
 
-	
-	      
+	@Override
+	public void updateUrlData(UrlData urlinfo) {
+		
+		Session session=factory.getCurrentSession();
+		session.update(urlinfo);		
+	}
+
+	@Override
+	public UrlData getByUrlId(int id) {
+		
+		Criteria crt = factory.getCurrentSession().createCriteria(UrlData.class);
+
+		crt.add(Restrictions.eq("id", id));
+		
+		UrlData url = (UrlData) crt.uniqueResult();
+
+		return (url != null) ? url : null;
+	}
+
+	@Override
+	public boolean deleteUrl(int id) {
+		
+		Session session=factory.getCurrentSession();
+		 UrlData link=session.get(UrlData.class, id);
+		 if(link==null)return false;
+		 session.delete(link);;
+		 return true;
+	}      
 	}
 

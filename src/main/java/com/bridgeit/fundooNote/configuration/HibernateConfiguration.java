@@ -8,7 +8,6 @@ import static org.hibernate.cfg.AvailableSettings.C3P0_TIMEOUT;
 import static org.hibernate.cfg.AvailableSettings.DIALECT;
 import static org.hibernate.cfg.AvailableSettings.FORMAT_SQL;
 import static org.hibernate.cfg.AvailableSettings.HBM2DDL_AUTO;
-import static org.hibernate.cfg.AvailableSettings.SHOW_SQL;
 
 import java.util.Properties;
 
@@ -26,9 +25,9 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.bridgeit.fundooNote.jsoup.UrlData;
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.noteservice.model.UrlData;
 import com.bridgeit.fundooNote.userservice.model.EmailDto;
 import com.bridgeit.fundooNote.userservice.model.User;
 
@@ -50,11 +49,11 @@ public class HibernateConfiguration {
 		 sessionFactory.setDataSource(dataSource());
 		 
 		 sessionFactory.setHibernateProperties(hibernateProperties());
-		 sessionFactory.setAnnotatedClasses(User.class,Note.class,Label.class);
+		 sessionFactory.setAnnotatedClasses(User.class,Note.class,Label.class,UrlData.class);
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.noteservice.model");	
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.userservice.model");
 		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.labelservice.model");
-//		 sessionFactory.setAnnotatedPackages("com.bridgeit.fundooNote.jsoup");
+	
 		 
 			return sessionFactory;		
 	}

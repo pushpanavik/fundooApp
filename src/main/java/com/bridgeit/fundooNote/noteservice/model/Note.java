@@ -3,9 +3,12 @@ package com.bridgeit.fundooNote.noteservice.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,11 +16,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.userservice.model.User;
 
@@ -39,42 +44,20 @@ public class Note  {
 	private boolean trash;
 	private Date lastupdatedAt;
 	private Date reminderDate;
-	private String urlImage;
-	private String urlDomain;
-	private String urlTitle;
-	private boolean urlFlag;
 	
-	public boolean isUrlFlag() {
-		return urlFlag;
+
+	@Column
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<UrlData> urls;
+	
+	public Set<UrlData> getUrls() {
+		return urls;
 	}
 
-	public void setUrlFlag(boolean urlFlag) {
-		this.urlFlag = urlFlag;
+	public void setUrls(Set<UrlData> urls) {
+		this.urls = urls;
 	}
 
-	public String getUrlImage() {
-		return urlImage;
-	}
-
-	public void setUrlImage(String urlImage) {
-		this.urlImage = urlImage;
-	}
-
-	public String getUrlDomain() {
-		return urlDomain;
-	}
-
-	public void setUrlDomain(String urlDomain) {
-		this.urlDomain = urlDomain;
-	}
-
-	public String getUrlTitle() {
-		return urlTitle;
-	}
-
-	public void setUrlTitle(String urlTitle) {
-		this.urlTitle = urlTitle;
-	}
 
 	public boolean isArchive() {
 		return archive;
@@ -138,7 +121,7 @@ public class Note  {
 		return "Note [id=" + id + ", title=" + title + ", description=" + description + ", createdAt=" + createdAt
 				+ ", color=" + color + ", archive=" + archive + ", pin=" + pin + ", trash=" + trash + ", lastupdatedAt="
 				+ lastupdatedAt + ", reminderDate=" + reminderDate + ",  user=" + user + ", listOfLabels=" + listOfLabels
-				+ ", image=" + image +", urlImage=" +urlImage+ ", urltitle=" +urlTitle+ ",urlDomain=" +urlDomain+ "]";
+				+ ", image=" + image +"]";
 	}
 
 	public int getId() {

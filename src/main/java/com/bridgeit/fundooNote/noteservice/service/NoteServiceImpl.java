@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -22,8 +26,10 @@ import com.bridgeit.fundooNote.labelservice.dao.ILabelDao;
 import com.bridgeit.fundooNote.labelservice.model.Label;
 import com.bridgeit.fundooNote.noteservice.dao.INoteDao;
 import com.bridgeit.fundooNote.noteservice.model.Note;
+import com.bridgeit.fundooNote.noteservice.model.UrlData;
 import com.bridgeit.fundooNote.userservice.dao.IUserDao;
 import com.bridgeit.fundooNote.userservice.model.User;
+import com.bridgeit.fundooNote.utilservice.GenerateToken;
 import com.bridgeit.fundooNote.utilservice.VerifyJwtToken;
 
 
@@ -49,26 +55,87 @@ public class NoteServiceImpl implements INoteService {
 	@Transactional
 	public long addNote(Note note,String token) {
 	
-		System.out.println("note token is" +token );
-		String contentData=note.getDescription();
-		String space=" ";
-		String [] splitArray=contentData.split(" ");
-	
-		for(int i=0;i<1;i++)
-		{
-			System.out.println(splitArray[i]);
-			List<String> list=new ArrayList<>();
-			list.add(splitArray[i]);
-		}
-		System.out.println(space);
 	int getId=VerifyJwtToken.getId(token);
 	User user=	noteDao.getUserById(getId);
 	
-	note.setUser(user);
+	Set<UrlData> listofurlinfo = urlinfo(note.getDescription());
+	
+
 	System.out.println("user information from add note method" +user.getUserId());
-//	noteDao.addNote(note,user);
+	
+	if (!listofurlinfo.isEmpty()) 
+	{
+		System.out.println("r1...");
+		note.setUrls(listofurlinfo);
+		for(UrlData list :listofurlinfo) {
+			System.out.println(list.getId() +"  "+list.getDescription()+ "  "+ list.getImageUrl()+ "  "+ list.getTitle());
+	
+		}
+		System.out.println("r2");
+	}
+	note.setUser(user);
+
 	return noteDao.addNote(note,user);
 	}
+
+
+	private Set<UrlData> urlinfo(String description) {
+		String urlPattern = "^((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?$";
+		 description = description.replaceAll("(\r\n | \n)", "\\s");
+			String[] descriptionArray = description.split("\\s+");
+
+			UrlData urlinfo = null;
+			Pattern p = Pattern.compile(urlPattern);
+			
+			Set<String> listofurl = new HashSet<String>();
+			Set<UrlData> listofurlinfo = new HashSet<UrlData>();
+			
+			for(int i=0;i<descriptionArray.length;i++) {
+				if(p.matcher(descriptionArray[i]).matches()) {
+					listofurl.add(descriptionArray[i]);
+				}	
+			}
+			
+			for(String url :listofurl) {
+				if (url != null) {
+					Document doc;
+					try {
+						doc = Jsoup.connect(url).get();
+					
+						String urlTitle = doc.title();
+
+						String urlDescription = url.split("://")[1].split("/")[0];
+						String urlImage = doc.select("meta[property=og:image]").first().attr("content");
+						if(urlImage==null ||urlImage!=null) {
+						urlinfo = new UrlData();
+						urlinfo.setUrl(url);
+						urlinfo.setImageUrl(urlImage);
+						urlinfo.setTitle(urlTitle);
+						urlinfo.setDescription(urlDescription);
+						
+						//noteDao.updateUrlData(urlinfo);
+						listofurlinfo.add(urlinfo);
+						
+						for(int i=0;i<listofurlinfo.size();i++)
+						{
+							System.out.println("Link Details : "+listofurlinfo.iterator().hasNext());
+						}
+						
+						}
+					}
+				 catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				}
+								
+			}
+		 
+			return listofurlinfo;
+	}
+
+
+
 
 	@Transactional
 	@Override
@@ -82,6 +149,13 @@ public class NoteServiceImpl implements INoteService {
 		int userid=VerifyJwtToken.getId(token);
 		System.out.println("user id--------------------->" +userid);
 		
+		Set<UrlData> listofurlinfo = urlinfo(note.getDescription());
+		if (!listofurlinfo.isEmpty()) {
+			note.setUrls(listofurlinfo);
+			for(UrlData list :listofurlinfo) {
+				System.out.println(list);
+			}
+		}
 		boolean status=noteDao.isNotewiththatIdExist(getId);
 		if(status==true) 
 		{
@@ -101,14 +175,9 @@ public class NoteServiceImpl implements INoteService {
 					note2.setCreatedAt(note.getCreatedAt());
 					note2.setUser(note.getUser());
 					note2.setReminderDate(note.getReminderDate());
-					note2.setUrlTitle(note.getUrlTitle());
-					note2.setUrlImage(note.getUrlImage());
-					note2.setUrlDomain(note.getUrlDomain());
-					note2.setUrlFlag(note.isUrlFlag());
-				
+					
 					noteDao.updateNode(note2);
-//					long d=note2.getReminderDate().getTime();
-//					System.out.println(d);
+
 			}
 			else
 			{
@@ -259,10 +328,8 @@ public class NoteServiceImpl implements INoteService {
 	public boolean removeCollaboratorOnNote(int userid, int noteid) {
 		System.out.println("Entering in to the note label service");
 		Note note = noteDao.getNoteById(noteid);
-		System.out.println("Note in collaborator:"+note);
 
 		User user = userDao.getUserById(userid);
-		System.out.println("user in collaborator:"+user);
 		
 		List<User> collaboratorUser =  note.getCollaboratedUser();
 		for(User user2:collaboratorUser) {
@@ -291,25 +358,21 @@ public class NoteServiceImpl implements INoteService {
 	@Override
 	@Transactional
 	public List<User> getAllCollaboratedUsers(int id) {
-
-		System.out.println("id : " + id);
-
+		
 		Note note = noteDao.getNoteById(id);
-
 		return note.getCollaboratedUser();
 
 	}
 
 	@Transactional
 	@Override
-	public List<Note> getAllCollaboratedNotes(String token) {
-		 
+	public List<Note> getAllCollaboratedNotes(String token) { 
 		
 		int id = VerifyJwtToken.getId(token);
-		System.out.println("tokenid===========>" +id);
 		User user2=noteDao.getUserById(id);
+		
 		List<Note> listofCollaboratedNotes = user2.getCollaboratorNotes();
-		//listofCollaboratedNotes.add(e)
+	
 		for(Note note3: listofCollaboratedNotes) {
 			System.out.println(note3.getCollaboratedUser());
 		}
@@ -331,9 +394,34 @@ public class NoteServiceImpl implements INoteService {
 		return false;
 	}
 	else {
-		System.out.println("user is found ");
 		return true;
 	}
+	}
+
+
+	@Override
+	public void removeUrl(String token, Note note, int id) {
+		int userId;
+		try {
+			userId =VerifyJwtToken.getId(token);
+			Note updatingnote = noteDao.getNoteById(note.getId());
+
+			if (updatingnote.getUser().getUserId() == userId) {
+				UrlData url = noteDao.getByUrlId(id);
+
+				if (updatingnote.getUrls().contains(url)) {
+					updatingnote.getUrls().remove(url);
+					boolean status = noteDao.deleteUrl(url.getId());
+					if (status) {
+						noteDao.updateNode(updatingnote);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
 	}
 
 	
